@@ -22,8 +22,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Dayspring\\SecurityBundle\\": "",
-            "exclude-from-classmap": [ "Tests/" ]
-        }
+            "Dayspring\\SecurityBundle\\": ""            
+        },
+        "exclude-from-classmap": [ "Tests/" ]
     }
 }
