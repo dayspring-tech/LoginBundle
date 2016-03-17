@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" namespace="Dayspring\SecurityBundle\Model" defaultIdMethod="native"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd">
+    <table name="users" phpName="User" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="email" phpName="Email" type="VARCHAR" size="100"/>
+        <column name="password" phpName="Password" type="VARCHAR" size="100"/>
+        <column name="salt" phpName="Salt" type="VARCHAR" size="100"/>
+        <column name="reset_token" phpName="ResetToken" type="CHAR" size="40" required="false"/>
+        <column name="reset_token_expire" phpName="ResetTokenExpire" type="TIMESTAMP" required="false"/>
+        <unique name="user_username_UNIQUE">
+            <unique-column name="email"/>
+        </unique>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+    <table name="roles" phpName="Role" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="role_name" phpName="RoleName" type="VARCHAR" size="50" required="true"/>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+    <table name="roles_users" phpName="RoleUser" idMethod="native" isCrossRef="true">
+        <column name="user_id" phpName="UserId" primaryKey="true" type="INTEGER" required="true"/>
+        <column name="role_id" phpName="RoleId" primaryKey="true" type="INTEGER" required="true"/>
+        <foreign-key foreignTable="users" name="FK_rolesUsers_user" onDelete="RESTRICT" onUpdate="RESTRICT">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="roles" name="FK_rolesUsers_role" onDelete="RESTRICT" onUpdate="RESTRICT">
+            <reference local="role_id" foreign="id"/>
+        </foreign-key>
+        <index name="FK_rolesUsers_user_idx">
+            <index-column name="user_id"/>
+        </index>
+        <index name="FK_rolesUsers_role_idx">
+            <index-column name="role_id"/>
+        </index>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+</database>

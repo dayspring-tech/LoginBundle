@@ -1,0 +1,29 @@
+{
+    "name":         "dayspring-tech/SecurityBundle",
+    "description":  "Form login user authentication for Symfony2, with forgot/reset password, change password.",
+    "keywords":     ["login", "user authentication", "forgot password", "reset password", "change password"],
+    "type":         "symfony-bundle",
+    "license":      "MIT",
+    "authors":     [
+        {
+            "name":     "Jeffrey Wong",
+            "email":    "jwong@dayspring-tech.com",
+            "homepage": "http://dayspring-tech.com"
+        }
+    ],
+    "require": {
+        "php":                      ">=5.5.0",
+        "symfony/framework-bundle": "^2.8.2",
+        "sensio/framework-extra-bundle": "^3.0.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.0",
+        "symfony/symfony": "^2.8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dayspring\\SecurityBundle\\": "",
+            "exclude-from-classmap": [ "Tests/" ]
+        }
+    }
+}
