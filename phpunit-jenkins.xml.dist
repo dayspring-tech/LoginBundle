@@ -37,6 +37,8 @@
                 <directory>./Tests</directory>
                 <directory>./vendor</directory>
                 <directory>./Resources</directory>
+                <directory>./Model/om</directory>
+                <directory>./Model/map</directory>
             </exclude>
         </whitelist>
     </filter>
