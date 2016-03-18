@@ -87,8 +87,8 @@
             <arg value="-l" />
 
             <fileset dir="${basedir}/">
+                <exclude name="vendor/" />
                 <include name="**/*.php" />
-                <exclude name="vendor" />
             </fileset>
 
         </apply>
