@@ -1,0 +1,11 @@
+<ruleset name="Dayspring Technologies Standard">
+    <description>Dayspring Technologies Standard</description>
+
+    <exclude-pattern>*/Model/map/*</exclude-pattern>
+    <exclude-pattern>*/Model/om/*</exclude-pattern>
+    <exclude-pattern>*/Resources/public/css/*</exclude-pattern>
+    <exclude-pattern>*/Resources/public/js/*</exclude-pattern>
+
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+</ruleset>
