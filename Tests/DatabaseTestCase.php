@@ -20,6 +20,13 @@ class DatabaseTestCase extends BaseDatabaseTestCase
         return TestKernel::class;
     }
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        self::runCommand('propel:build --insert-sql');
+    }
+
     protected static function getApplication()
     {
         if (null === self::$application) {

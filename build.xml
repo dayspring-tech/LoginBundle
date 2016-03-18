@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- build/clean.xml -->
+<!-- http://joshuaestes.me/post/31732961725/symfony2-continuous-integration-with-jenkins-ant-and -->
+<project name="project" default="build-parallel">
+    <target name="build"
+            depends="clean, git, prepare, lint, phploc, pdepend, phpmd-ci, phpcs-ci, phpcpd, symfony.test-all"/>
+
+    <target name="build-parallel" depends="clean, git, prepare">
+        <parallel threadCount="7">
+            <antcall target="lint" />
+            <antcall target="phploc" />
+            <antcall target="pdepend" />
+            <antcall target="phpmd-ci" />
+            <antcall target="phpcs-ci" />
+            <antcall target="phpcpd" />
+            <antcall target="symfony.test-all" />
+        </parallel>
+    </target>
+
+    <target name="clean"
+            description="Cleanup build artifacts">
+        <delete dir="${basedir}/build/api"/>
+        <delete dir="${basedir}/build/code-browser"/>
+        <delete dir="${basedir}/build/coverage"/>
+        <delete dir="${basedir}/build/logs"/>
+        <delete dir="${basedir}/build/pdepend"/>
+        <antcall target="symfony.clean" />
+    </target>
+
+    <target name="symfony.clean"
+            description="Cleans up symfony data">
+        <!--<delete file="${basedir}/composer.phar" />-->
+        <delete file="${basedir}/app/config/parameters.yml" />
+        <delete dir="${basedir}/app/cache" />
+    </target>
+
+    <target name="git"
+            depends="clean"
+            description="Updates submodules">
+        <exec executable="git">
+            <arg value="submodule"/>
+            <arg value="update"/>
+            <arg value="--init"/>
+            <arg value="--recursive"/>
+        </exec>
+    </target>
+
+    <target name="prepare"
+            depends="clean"
+            description="Prepare for build">
+        <mkdir dir="${basedir}/build/api"/>
+        <mkdir dir="${basedir}/build/code-browser"/>
+        <mkdir dir="${basedir}/build/coverage"/>
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/pdepend"/>
+        <antcall target="symfony.prepare" />
+    </target>
+
+    <target name="check-composer">
+        <available file="composer.phar" property="composer.present"/>
+    </target>
+
+    <target name="install-composer" depends="check-composer" unless="composer.present">
+        <exec executable="bash">
+            <arg value="-c" />
+            <arg value="curl -s http://getcomposer.org/installer | php" />
+        </exec>
+    </target>
+
+    <target name="symfony.prepare" depends="install-composer">
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="update" />
+        </exec>
+
+        <!-- change db setup to use different schema for jenkins runs -->
+        <exec executable="bash">
+            <arg value="-c" />
+            <arg value=" cat ${basedir}/Tests/Resources/config/config_jenkins.yml >> ${basedir}/Tests/Resources/config/config.yml" />
+        </exec>
+
+    </target>
+
+    <target name="lint"
+            description="Syntax check">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+
+            <fileset dir="${basedir}/">
+                <include name="**/*.php" />
+                <exclude name="vendor" />
+            </fileset>
+
+        </apply>
+    </target>
+
+    <target name="phploc" description="Measure project size using PHPLOC">
+        <exec executable="phploc">
+            <arg value="--log-csv" />
+            <arg value="${basedir}/build/logs/phploc.csv" />
+            <arg path="${basedir}/" />
+        </exec>
+    </target>
+
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="pdepend">
+            <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+            <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+            <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+            <arg value="--ignore=${basedir}/Tests,${basedir}/Resources,${basedir}/vendor,${basedir}/Model/map,${basedir}/Model/om" />
+            <arg path="${basedir}" />
+        </exec>
+    </target>
+
+    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd" />
+            <arg value="${basedir}/build/logs/pmd-cpd.xml" />
+            <!--			<arg value="- -exclude" />
+            <arg value="${basedir}/app" />
+            <arg value="- -exclude" />
+            <arg value="${basedir}/vendor" />-->
+            <arg value="--exclude" />
+            <arg value="Model/map" />
+            <arg value="--exclude" />
+            <arg value="Model/om" />
+            <arg value="--exclude" />
+            <arg value="DependencyInjection" />
+            <arg value="--exclude" />
+            <arg value="Tests" />
+            <arg value="--exclude" />
+            <arg value="vendor" />
+            <arg path="${basedir}" />
+        </exec>
+    </target>
+
+    <target name="phpcs"
+            description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="phpcs">
+            <arg value="--standard=${basedir}/build/phpcs.xml" />
+            <arg value="--ignore=${basedir}/vendor/*,${basedir}/Tests" />
+            <arg path="${basedir}/" />
+        </exec>
+    </target>
+
+    <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+        <exec executable="phpcs" output="/dev/null">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+            <arg value="--standard=${basedir}/build/phpcs.xml" />
+            <arg value="--ignore=${basedir}/vendor/*,${basedir}/Tests,${basedir}/Resources" />
+            <!--<arg value="- -ignore=${basedir}/vendor/*,${basedir}/app/*,${basedir}/web/*,*.js,*.css" />-->
+            <arg path="${basedir}" />
+        </exec>
+    </target>
+
+
+    <target name="phpmd"
+            description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="phpmd">
+            <arg path="${basedir}/app/Resources,${basedir}/" />
+            <arg value="text" />
+            <arg value="${basedir}/build/phpmd.xml" />
+            <arg value="--exclude"/>
+            <arg value="vendor,Tests,Resources,Model/map,Model/om" />
+        </exec>
+    </target>
+
+    <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+        <exec executable="phpmd">
+            <arg path="${basedir}/app/Resources,${basedir}/" />
+            <arg value="xml" />
+            <arg value="${basedir}/build/phpmd.xml" />
+            <arg value="--reportfile" />
+            <arg value="${basedir}/build/logs/pmd.xml" />
+            <arg value="--exclude"/>
+            <arg value="vendor,Tests,Resources,Model/map,Model/om" />
+        </exec>
+    </target>
+
+    <target name="phpdox" description="Generate API documentation using phpDox">
+        <exec executable="phpdox"/>
+    </target>
+    <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
+        <exec executable="phpcb">
+            <arg value="--log" />
+            <arg path="${basedir}/build/logs" />
+            <arg value="--source" />
+            <arg path="${basedir}/src" />
+            <arg value="--output" />
+            <arg path="${basedir}/build/code-browser" />
+        </exec>
+    </target>
+
+    <target name="symfony.test-all"
+            description="Runs all the functional and unit test">
+        <exec executable="phpunit"
+              failonerror="false">
+            <arg value="-c" />
+            <arg value="phpunit-jenkins.xml.dist" />
+        </exec>
+    </target>
+
+    <target name="symfony.test-only"
+            description="Runs all the functional and unit tests, but no code coverage">
+        <exec executable="phpunit"
+              failonerror="false">
+        </exec>
+    </target>
+</project>
