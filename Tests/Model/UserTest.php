@@ -6,11 +6,11 @@
  * Time: 11:35 AM
  */
 
-namespace Dayspring\SecurityBundle\Tests\Model;
+namespace Dayspring\LoginBundle\Tests\Model;
 
-use Dayspring\SecurityBundle\Model\Role;
-use Dayspring\SecurityBundle\Model\User;
-use Dayspring\SecurityBundle\Tests\WebTestCase;
+use Dayspring\LoginBundle\Model\Role;
+use Dayspring\LoginBundle\Model\User;
+use Dayspring\LoginBundle\Tests\WebTestCase;
 
 class UserTest extends WebTestCase
 {

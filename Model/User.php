@@ -1,9 +1,9 @@
 <?php
 
-namespace Dayspring\SecurityBundle\Model;
+namespace Dayspring\LoginBundle\Model;
 
 use DateTime;
-use Dayspring\SecurityBundle\Model\om\BaseUser;
+use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;

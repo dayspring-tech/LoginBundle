@@ -6,7 +6,7 @@
  * Time: 4:40 PM
  */
 
-namespace Dayspring\SecurityBundle\Tests;
+namespace Dayspring\LoginBundle\Tests;
 
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;

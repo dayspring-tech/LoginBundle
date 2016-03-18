@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="default" namespace="Dayspring\SecurityBundle\Model"
+<database name="default" namespace="Dayspring\LoginBundle\Model"
           defaultIdMethod="native"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd">

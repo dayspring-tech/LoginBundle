@@ -6,9 +6,9 @@
  * Time: 2:18 PM
  */
 
-namespace Dayspring\SecurityBundle\Tests\DependencyInjection;
+namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 
-use Dayspring\SecurityBundle\DependencyInjection\Configuration;
+use Dayspring\LoginBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase

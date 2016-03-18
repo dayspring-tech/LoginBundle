@@ -5,11 +5,11 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         dayspring:
-            id: dayspring_security.user_provider
+            id: dayspring_login.user_provider
 
     # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
     encoders:
-        Dayspring\SecurityBundle\Model\User:
+        Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
             cost: 12
 

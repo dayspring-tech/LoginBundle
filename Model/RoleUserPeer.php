@@ -1,8 +1,8 @@
 <?php
 
-namespace Dayspring\SecurityBundle\Model;
+namespace Dayspring\LoginBundle\Model;
 
-use Dayspring\SecurityBundle\Model\om\BaseRoleUserPeer;
+use Dayspring\LoginBundle\Model\om\BaseRoleUserPeer;
 
 class RoleUserPeer extends BaseRoleUserPeer
 {

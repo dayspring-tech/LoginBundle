@@ -6,11 +6,11 @@
  * Time: 12:25 PM
  */
 
-namespace Dayspring\SecurityBundle\Tests\Controller;
+namespace Dayspring\LoginBundle\Tests\Controller;
 
-use Dayspring\SecurityBundle\Model\User;
-use Dayspring\SecurityBundle\Model\UserQuery;
-use Dayspring\SecurityBundle\Tests\WebTestCase;
+use Dayspring\LoginBundle\Model\User;
+use Dayspring\LoginBundle\Model\UserQuery;
+use Dayspring\LoginBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
 class ForgotResetControllerTest extends WebTestCase

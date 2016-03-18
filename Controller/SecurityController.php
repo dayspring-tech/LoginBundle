@@ -1,6 +1,6 @@
 <?php
 
-namespace Dayspring\SecurityBundle\Controller;
+namespace Dayspring\LoginBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
