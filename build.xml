@@ -76,7 +76,7 @@
         <!-- change db setup to use different schema for jenkins runs -->
         <exec executable="bash">
             <arg value="-c" />
-            <arg value=" cat ${basedir}/Tests/Resources/config/config_jenkins.yml >> ${basedir}/Tests/Resources/config/config.yml" />
+            <arg value=" cat ${basedir}/Tests/Resources/config/config_jenkins.yml >> ${basedir}/Tests/Resources/config/config_test.yml" />
         </exec>
 
     </target>

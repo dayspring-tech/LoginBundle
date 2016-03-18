@@ -32,7 +32,7 @@ class TestKernel extends Kernel
     }
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/Resources/config/config.yml');
+        $loader->load(__DIR__.'/Resources/config/config_test.yml');
         if (class_exists('Symfony\Component\Asset\Package')) {
             $loader->load(function (ContainerBuilder $container) {
                 $container->loadFromExtension('framework', array('assets' => array()));
