@@ -1,10 +1,10 @@
 <?php
 
-namespace Dayspring\SecurityBundle\Controller;
+namespace Dayspring\LoginBundle\Controller;
 
-use Dayspring\SecurityBundle\Entity\ChangePasswordEntity;
-use Dayspring\SecurityBundle\Form\Type\ChangePasswordType;
-use Dayspring\SecurityBundle\Form\Type\ResetPasswordType;
+use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
+use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
+use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -49,7 +49,7 @@ class ForgotResetController extends Controller
                     ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(
-                            'DayspringSecurityBundle:Emails:reset_password.html.twig',
+                            'DayspringLoginBundle:Emails:reset_password.html.twig',
                             $data
                         ),
                         'text/html'

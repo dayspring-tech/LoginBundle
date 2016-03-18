@@ -6,7 +6,7 @@
  * Time: 2:33 PM
  */
 
-namespace Dayspring\SecurityBundle\Form\Type;
+namespace Dayspring\LoginBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;

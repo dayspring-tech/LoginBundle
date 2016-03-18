@@ -9,7 +9,7 @@ security:
 
     # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
     encoders:
-        Dayspring\SecurityBundle\Model\User:
+        Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
             cost: 12
 

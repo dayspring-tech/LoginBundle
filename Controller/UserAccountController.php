@@ -6,7 +6,7 @@
  * Time: 2:37 PM
  */
 
-namespace Dayspring\SecurityBundle\Controller;
+namespace Dayspring\LoginBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

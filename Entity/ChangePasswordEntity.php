@@ -6,7 +6,7 @@
  * Time: 2:46 PM
  */
 
-namespace Dayspring\SecurityBundle\Entity;
+namespace Dayspring\LoginBundle\Entity;
 
 use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 use Symfony\Component\Validator\Constraints as Assert;

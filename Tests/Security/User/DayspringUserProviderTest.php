@@ -6,11 +6,11 @@
  * Time: 1:30 PM
  */
 
-namespace Dayspring\SecurityBundle\Tests\Security\User;
+namespace Dayspring\LoginBundle\Tests\Security\User;
 
-use Dayspring\SecurityBundle\Model\User;
-use Dayspring\SecurityBundle\Security\User\DayspringUserProvider;
-use Dayspring\SecurityBundle\Tests\WebTestCase;
+use Dayspring\LoginBundle\Model\User;
+use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
+use Dayspring\LoginBundle\Tests\WebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DayspringUserProviderTest extends WebTestCase
@@ -25,7 +25,7 @@ class DayspringUserProviderTest extends WebTestCase
     {
         parent::setUp();
 
-        self::runCommand('propel:fixtures:load @DayspringSecurityBundle --sql');
+        self::runCommand('propel:fixtures:load @DayspringLoginBundle --sql');
 
         $this->userProvider = new DayspringUserProvider();
     }

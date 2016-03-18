@@ -16,7 +16,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="SecurityBundle Test Suite">
+        <testsuite name="LoginBundle Test Suite">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>

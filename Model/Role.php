@@ -1,8 +1,8 @@
 <?php
 
-namespace Dayspring\SecurityBundle\Model;
+namespace Dayspring\LoginBundle\Model;
 
-use Dayspring\SecurityBundle\Model\om\BaseRole;
+use Dayspring\LoginBundle\Model\om\BaseRole;
 
 class Role extends BaseRole
 {

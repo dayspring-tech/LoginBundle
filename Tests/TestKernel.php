@@ -1,5 +1,5 @@
 <?php
-namespace Dayspring\SecurityBundle\Tests;
+namespace Dayspring\LoginBundle\Tests;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,7 +24,7 @@ class TestKernel extends Kernel
 //            new \Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new \Propel\PropelBundle\PropelBundle(),
 //            new \Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
-            new \Dayspring\SecurityBundle\DayspringSecurityBundle(),
+            new \Dayspring\LoginBundle\DayspringLoginBundle(),
 
 //            new JMS\AopBundle\JMSAopBundle(),
 //            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),

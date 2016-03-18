@@ -6,9 +6,9 @@
  * Time: 2:19 PM
  */
 
-namespace Dayspring\SecurityBundle\Tests\DependencyInjection;
+namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 
-use Dayspring\SecurityBundle\DependencyInjection\DayspringSecurityExtension;
+use Dayspring\LoginBundle\DependencyInjection\DayspringSecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 

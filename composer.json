@@ -1,5 +1,5 @@
 {
-    "name":         "dayspring-tech/security-bundle",
+    "name":         "dayspring-tech/login-bundle",
     "description":  "Form login user authentication for Symfony2, with forgot/reset password, change password.",
     "keywords":     ["login", "user authentication", "forgot password", "reset password", "change password"],
     "type":         "symfony-bundle",
@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dayspring\\SecurityBundle\\": ""
+            "Dayspring\\LoginBundle\\": ""
         },
         "exclude-from-classmap": [ "Tests/" ]
     }

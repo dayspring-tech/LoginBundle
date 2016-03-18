@@ -9,7 +9,7 @@ security:
         dayspring:
             id: dayspring_security.user_provider
     encoders:
-        Dayspring\SecurityBundle\Model\User:
+        Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
             cost: 12
     firewalls:

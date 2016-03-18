@@ -1,8 +1,8 @@
 <?php
-namespace Dayspring\SecurityBundle\Security\User;
+namespace Dayspring\LoginBundle\Security\User;
 
-use Dayspring\SecurityBundle\Model\User;
-use Dayspring\SecurityBundle\Model\UserQuery;
+use Dayspring\LoginBundle\Model\User;
+use Dayspring\LoginBundle\Model\UserQuery;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,7 +47,7 @@ class DayspringUserProvider implements UserProviderInterface
 
     public function supportsClass($class)
     {
-        return $class === 'Dayspring\SecurityBundle\Model\User';
+        return $class === 'Dayspring\LoginBundle\Model\User';
     }
 
     /**
