@@ -10,7 +10,7 @@ namespace Dayspring\SecurityBundle\Tests\Controller;
 
 use Dayspring\SecurityBundle\Model\User;
 use Dayspring\SecurityBundle\Model\UserQuery;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Dayspring\SecurityBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
 class ForgotResetControllerTest extends WebTestCase
@@ -30,6 +30,10 @@ class ForgotResetControllerTest extends WebTestCase
 
     public function testForgotPassword()
     {
+        $user = new User();
+        $user->setEmail(sprintf("test+%f@test.com", microtime(true)));
+        $user->save();
+
         $crawler = $this->client->request("GET", "/forgot-password");
 
         $this->assertGreaterThan(
@@ -38,7 +42,7 @@ class ForgotResetControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton("Submit")->form();
-        $form['form[email]'] = 'testuser@example.com';
+        $form['form[email]'] = $user->getEmail();
         $crawler = $this->client->submit($form);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());

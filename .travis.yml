@@ -8,6 +8,9 @@ php:
     - 7.0
     - hhvm
 
+services:
+    - mysql
+
 cache:
     directories:
         - $HOME/.composer/cache/files
@@ -31,6 +34,9 @@ before_install:
 
 install:
     - composer update ${COMPOSER_FLAGS} --prefer-source
+
+before_script:
+  - mysql -e 'create database securitybundle_test;'
 
 script:
     - vendor/bin/phpunit --colors

@@ -10,7 +10,7 @@ namespace Dayspring\SecurityBundle\Tests\Model;
 
 use Dayspring\SecurityBundle\Model\Role;
 use Dayspring\SecurityBundle\Model\User;
-use Dayspring\UnitTestBundle\Framework\Test\DatabaseTestCase;
+use Dayspring\SecurityBundle\Tests\DatabaseTestCase;
 
 class UserTest extends DatabaseTestCase
 {
