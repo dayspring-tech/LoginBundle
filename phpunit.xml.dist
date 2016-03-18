@@ -22,7 +22,7 @@
     </testsuites>
 
     <logging>
-        <log type="junit" target="../build/logs/junit.xml"
+        <log type="junit" target="build/logs/junit.xml"
              logIncompleteSkipped="false"/>
     </logging>
 
