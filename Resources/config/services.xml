@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="dayspring_security.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
+        <service id="dayspring_login.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
         </service>
     </services>
 </container>

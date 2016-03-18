@@ -24,7 +24,7 @@ class ForgotResetController extends Controller
      */
     public function forgotPasswordAction(Request $request)
     {
-        $userProvider = $this->get('dayspring_security.user_provider');
+        $userProvider = $this->get('dayspring_login.user_provider');
 
         $form = $this->createFormBuilder(array())
             ->add('email', EmailType::class)
@@ -79,7 +79,7 @@ class ForgotResetController extends Controller
      */
     public function resetPasswordAction(Request $request, $resetToken)
     {
-        $userProvider = $this->get('dayspring_security.user_provider');
+        $userProvider = $this->get('dayspring_login.user_provider');
         $encoder = $this->get('security.password_encoder');
 
         $user = $userProvider->loadUserByResetToken($resetToken);

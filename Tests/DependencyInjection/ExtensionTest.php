@@ -8,7 +8,7 @@
 
 namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 
-use Dayspring\LoginBundle\DependencyInjection\DayspringSecurityExtension;
+use Dayspring\LoginBundle\DependencyInjection\DayspringLoginExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -18,7 +18,7 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
     public function testLoadEmptyConfiguration()
     {
         $container = $this->createContainer();
-        $extension = new DayspringSecurityExtension();
+        $extension = new DayspringLoginExtension();
         $extension->load(array(), $container);
         $container->registerExtension($extension);
 

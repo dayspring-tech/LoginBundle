@@ -1,4 +1,4 @@
-# Dayspring Security Bundle
+# Dayspring Login Bundle
 
 This bundle provides basic username/password authentication, forgot/reset password, and change password.
 
@@ -7,7 +7,7 @@ Minimally, your `security.yml` should contain the following:
 security:
     providers:
         dayspring:
-            id: dayspring_security.user_provider
+            id: dayspring_login.user_provider
     encoders:
         Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
