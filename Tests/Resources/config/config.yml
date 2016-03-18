@@ -27,4 +27,5 @@ propel:
         dsn:      mysql:host=localhost;dbname=mydatabase;charset=UTF8
     path:       "%kernel.root_dir%/../../vendor/propel/propel1"
     phing_path: "%kernel.root_dir%/../../vendor/phing"
-
+    build_properties:
+        propel.php.dir: "/"
