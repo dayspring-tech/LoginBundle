@@ -10,11 +10,10 @@ namespace Dayspring\SecurityBundle\Tests\Security\User;
 
 use Dayspring\SecurityBundle\Model\User;
 use Dayspring\SecurityBundle\Security\User\DayspringUserProvider;
-use Dayspring\SecurityBundle\Tests\DayspringSecurityBundleDatabaseTestCase;
-use Dayspring\UnitTestBundle\Framework\Test\DatabaseTestCase;
+use Dayspring\SecurityBundle\Tests\DatabaseTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class DayspringUserProviderTest extends DayspringSecurityBundleDatabaseTestCase
+class DayspringUserProviderTest extends DatabaseTestCase
 {
 
     /**
@@ -25,6 +24,8 @@ class DayspringUserProviderTest extends DayspringSecurityBundleDatabaseTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        self::runCommand('propel:fixtures:load @DayspringSecurityBundle --sql');
 
         $this->userProvider = new DayspringUserProvider();
     }

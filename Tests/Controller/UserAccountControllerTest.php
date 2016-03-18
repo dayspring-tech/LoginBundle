@@ -10,11 +10,10 @@ namespace Dayspring\SecurityBundle\Tests\Controller;
 
 use Dayspring\SecurityBundle\Model\User;
 use Dayspring\SecurityBundle\Model\UserQuery;
-use Dayspring\SecurityBundle\Tests\DayspringSecurityBundleWebTestCase;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Dayspring\SecurityBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
-class UserAccountControllerTest extends DayspringSecurityBundleWebTestCase
+class UserAccountControllerTest extends WebTestCase
 {
 
     /**

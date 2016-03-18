@@ -2,10 +2,14 @@ imports:
     - { resource: security.yml }
 
 framework:
+    test: ~
     secret: xxxxxxxxxx
     router:        { resource: "%kernel.root_dir%/config/routing.yml" }
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
     templating:    { engines: ['twig', 'php'] }
-    test: ~
     session:
         storage_id: session.storage.mock_file
     profiler:
@@ -23,3 +27,4 @@ propel:
         dsn:      mysql:host=localhost;dbname=mydatabase;charset=UTF8
     path:       "%kernel.root_dir%/../../vendor/propel/propel1"
     phing_path: "%kernel.root_dir%/../../vendor/phing"
+
