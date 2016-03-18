@@ -10,10 +10,10 @@ namespace Dayspring\SecurityBundle\Tests\Security\User;
 
 use Dayspring\SecurityBundle\Model\User;
 use Dayspring\SecurityBundle\Security\User\DayspringUserProvider;
-use Dayspring\SecurityBundle\Tests\DatabaseTestCase;
+use Dayspring\SecurityBundle\Tests\WebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class DayspringUserProviderTest extends DatabaseTestCase
+class DayspringUserProviderTest extends WebTestCase
 {
 
     /**
