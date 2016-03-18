@@ -1,0 +1,25 @@
+imports:
+    - { resource: security.yml }
+
+framework:
+    secret: xxxxxxxxxx
+    router:        { resource: "%kernel.root_dir%/config/routing.yml" }
+    templating:    { engines: ['twig', 'php'] }
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+twig:
+    debug:            %kernel.debug%
+    strict_variables: %kernel.debug%
+
+propel:
+    dbal:
+        driver:   mysql
+        user:     devuser
+        password: devpass
+        dsn:      mysql:host=localhost;dbname=mydatabase;charset=UTF8
+    path:       "%kernel.root_dir%/../../vendor/propel/propel1"
+    phing_path: "%kernel.root_dir%/../../vendor/phing"

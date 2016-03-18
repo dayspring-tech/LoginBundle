@@ -10,10 +10,11 @@ namespace Dayspring\SecurityBundle\Tests\Controller;
 
 use Dayspring\SecurityBundle\Model\User;
 use Dayspring\SecurityBundle\Model\UserQuery;
+use Dayspring\SecurityBundle\Tests\DayspringSecurityBundleWebTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
-class ForgotResetControllerTest extends WebTestCase
+class ForgotResetControllerTest extends DayspringSecurityBundleWebTestCase
 {
 
     /**
@@ -31,7 +32,7 @@ class ForgotResetControllerTest extends WebTestCase
     public function testForgotPassword()
     {
         $crawler = $this->client->request("GET", "/forgot-password");
-
+var_dump($this->client->getResponse()->getContent());
         $this->assertGreaterThan(
             0,
             $crawler->filter('html:contains("Forgot Password")')->count()

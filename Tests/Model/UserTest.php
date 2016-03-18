@@ -10,9 +10,10 @@ namespace Dayspring\SecurityBundle\Tests\Model;
 
 use Dayspring\SecurityBundle\Model\Role;
 use Dayspring\SecurityBundle\Model\User;
+use Dayspring\SecurityBundle\Tests\DayspringSecurityBundleDatabaseTestCase;
 use Dayspring\UnitTestBundle\Framework\Test\DatabaseTestCase;
 
-class UserTest extends DatabaseTestCase
+class UserTest extends DayspringSecurityBundleDatabaseTestCase
 {
 
     public function testGetUsername()

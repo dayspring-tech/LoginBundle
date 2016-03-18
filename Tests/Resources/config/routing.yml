@@ -1,0 +1,4 @@
+dayspring_security:
+    resource: "@DayspringSecurityBundle/Controller/"
+    type:     annotation
+    prefix:   /

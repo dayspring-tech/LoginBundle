@@ -11,12 +11,12 @@
          bootstrap="vendor/autoload.php">
 
     <php>
-        <ini name="error_reporting" value="E_ALL ^ E_DEPRECATED"/>
-        <includePath>vendor/phing/phing/classes</includePath>
+        <ini name="error_reporting" value="-1"/>
+        <server name="KERNEL_DIR" value="./Tests/" />
     </php>
 
     <testsuites>
-        <testsuite name="PropelBundle Test Suite">
+        <testsuite name="SecurityBundle Test Suite">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>
@@ -32,4 +32,3 @@
         </whitelist>
     </filter>
 </phpunit>
-

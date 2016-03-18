@@ -1,0 +1,36 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        dayspring:
+            id: dayspring_security.user_provider
+
+    # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
+    encoders:
+        Dayspring\SecurityBundle\Model\User:
+            algorithm: bcrypt
+            cost: 12
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern:  ^/(login|forgot-password|reset-password/[0-9a-zA-Z]+)$
+            security: false
+
+        secured_area:
+            pattern:    ^/
+            form_login:
+                check_path: _login_check
+                login_path: _login
+                default_target_path: /_demo/secure
+                provider: dayspring
+            logout:
+                path:   _logout
+                target: /
+            anonymous: ~
