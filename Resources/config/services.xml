@@ -13,5 +13,8 @@
         <service id="dayspring_login.totp_authenticator" class="Dayspring\LoginBundle\Security\TotpAuthenticator">
             <argument type="service" id="service_container" />
         </service>
+        <service id="dayspring_login.totp_authenticator_helper" class="Dayspring\LoginBundle\Security\TotpAuthenticatorHelper">
+
+        </service>
     </services>
 </container>

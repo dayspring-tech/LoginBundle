@@ -67,8 +67,23 @@ class User extends BaseUser implements UserInterface
         return parent::getResetToken();
     }
 
+    protected function getActiveTotpTokenQuery()
+    {
+        return UserTotpTokenQuery::create()
+            ->filterByUser($this)
+            ->filterByActive(true);
+    }
+
+    public function getActiveTotpTokens()
+    {
+        return $this->getActiveTotpTokenQuery()->find();
+    }
+
     public function hasTotp()
     {
-        return false;
+        $tokenCount = $this->getActiveTotpTokenQuery()
+            ->count();
+
+        return $tokenCount > 0;
     }
 }

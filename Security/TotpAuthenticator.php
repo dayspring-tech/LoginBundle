@@ -50,16 +50,21 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
 
     public function getCredentials(Request $request)
     {
+        $token = $this->container->get('security.token_storage')->getToken();
+
         if ($request->getPathInfo() == '/totp_login') {
+            $this->container->get('logger')->debug('getCredentials matched /totp_login');
             return;
         }
 
-        $token = $this->container->get('security.token_storage')->getToken();
+
+        $this->container->get('logger')->debug('getCredentials');
 
         if ($request->getPathInfo() == '/_totp_login_check') {
             $oneTime = $request->request->get('_one_time');
 
             return array(
+                'token' => $token,
                 'user' => $token ? $token->getUser() : null,
                 'one_time' => $oneTime
             );
@@ -69,7 +74,7 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
             $user = $token->getUser();
 
             if ($user->hasTotp() && !$token instanceof TotpToken) {
-                $e = new AuthenticationException("User must authenticate with TOTP");
+                $e = new AuthenticationException("Enter your MFA token.");
                 $e->setToken($token);
                 throw $e;
             }
@@ -94,9 +99,13 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         $oneTime = $credentials['one_time'];
         $user = $credentials['user'];
 
-        if ($oneTime != '123456') {
+        $helper = $this->container->get('dayspring_login.totp_authenticator_helper');
+
+        if (!$helper->checkUserCodes($user, $oneTime)) {
             // throw any AuthenticationException
-            throw new BadCredentialsException();
+            $e = new AuthenticationException("Invalid token");
+            $e->setToken($credentials['token']);
+            throw $e;
         }
 
         return true;
@@ -114,6 +123,8 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
     {
         $tokenStorage = $this->container->get('security.token_storage');
         $tokenStorage->setToken($exception->getToken());
+
+        $this->container->get('logger')->debug("onAuthenticationFailure setting token");
 
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
         $url = $this->getLoginUrl();

@@ -1,0 +1,24 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Two-Factor{% endblock %}
+
+{% block content %}
+    <div class="row padding-bottom">
+        <div class="col-md-4 col-md-offset-4">
+            {% include "::sessionFlash.html.twig" %}
+
+            <h1>Two-Factor</h1>
+
+            <form action="{{ path('account_two_factor_verify') }}" method="post">
+
+                <img src="{{ url }}" />
+
+                {{ form_row(form.totp_token_id) }}
+                {{ form_row(form.code) }}
+
+                <button type="submit" class="btn btn-primary">Verify</button>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

@@ -43,4 +43,23 @@
             <parameter name="Engine" value="InnoDB"/>
         </vendor>
     </table>
+
+    <table name="user_totp_tokens" phpName="UserTotpToken" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="user_id" phpName="UserId" primaryKey="true" type="INTEGER" required="true"/>
+        <column name="name" phpName="Name" type="VARCHAR" size="100"/>
+        <column name="secret" phpName="Secret" type="VARCHAR" size="100"/>
+        <column name="active" phpName="Active" type="BOOLEAN" default="false" />
+        <column name="last_used" phpName="LastUsed" type="TIMESTAMP" required="false" />
+        <foreign-key foreignTable="users" name="FK_userTotpToken_user" onDelete="RESTRICT" onUpdate="RESTRICT">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <index name="FK_userTotpToken_user_idx">
+            <index-column name="user_id"/>
+        </index>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+
 </database>
