@@ -134,13 +134,8 @@ class ForgotResetController extends Controller
                 $currentUser->setPassword($encoded);
                 $currentUser->save();
 
-                $token = new UsernamePasswordToken(
-                    $currentUser,
-                    $data->getNewPassword(),
-                    "secured_area",
-                    $currentUser->getRoles()
-                );
-                $token = $authenticationManager->authenticate($token);
+                $token = $this->get('dayspring_login.totp_authenticator')
+                    ->createAuthenticatedToken($currentUser, "secured_area");
                 $this->get("security.token_storage")->setToken($token);
 
                 $session->getFlashBag()->add('success', 'New password has been saved.');

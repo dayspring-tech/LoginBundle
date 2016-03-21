@@ -25,11 +25,11 @@ security:
 
         secured_area:
             pattern:    ^/
-            form_login:
-                check_path: _login_check
-                login_path: _login
-                default_target_path: /_demo/secure
-                provider: dayspring
+            guard:
+                authenticators:
+                    - dayspring_login.username_password_authenticator
+                    - dayspring_login.totp_authenticator
+                entry_point: dayspring_login.username_password_authenticator
             logout:
                 path:   _logout
                 target: /
