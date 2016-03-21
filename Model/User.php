@@ -66,4 +66,9 @@ class User extends BaseUser implements UserInterface
         }
         return parent::getResetToken();
     }
+
+    public function hasTotp()
+    {
+        return false;
+    }
 }

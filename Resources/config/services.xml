@@ -7,5 +7,11 @@
     <services>
         <service id="dayspring_login.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
         </service>
+        <service id="dayspring_login.username_password_authenticator" class="Dayspring\LoginBundle\Security\UsernamePasswordAuthenticator">
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="dayspring_login.totp_authenticator" class="Dayspring\LoginBundle\Security\TotpAuthenticator">
+            <argument type="service" id="service_container" />
+        </service>
     </services>
 </container>

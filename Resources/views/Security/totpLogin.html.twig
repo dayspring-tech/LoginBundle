@@ -1,0 +1,32 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="row padding-bottom" id="login-form">
+        <div class="col-md-4 col-md-offset-4">
+            {% include "::sessionFlash.html.twig" %}
+
+            <h1>Log In</h1>
+
+            <form action="{{ path('_totp_login_check') }}" method="post">
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.message|trans({}, 'messages')|raw }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="username">Code</label>
+                    <input type="text" class="form-control" id="one_time" name="_one_time"
+                           >
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </form>
+
+            <p><a href="{{ path('forgot_password') }}">Forgot password?</a></p>
+        </div>
+    </div>
+
+{% endblock %}
