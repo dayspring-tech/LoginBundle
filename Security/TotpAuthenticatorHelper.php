@@ -28,12 +28,30 @@ class TotpAuthenticatorHelper
     }
 
     /**
+     * @param mixed $issuer
+     */
+    public function setIssuer($issuer)
+    {
+        $this->issuer = $issuer;
+    }
+
+    /**
      * Generate a new secret.
      * @return string
      */
     public function generateSecret()
     {
         return $this->googleAuthenticator->generateSecret();
+    }
+
+    /**
+     * Generate the current code.
+     * @param UserTotpToken $token
+     * @return string
+     */
+    public function generateCode(UserTotpToken $token)
+    {
+        return $this->googleAuthenticator->getCode($token->getSecret());
     }
 
     /**
@@ -89,7 +107,7 @@ class TotpAuthenticatorHelper
             $encoderURL = sprintf(
                 'otpauth://totp/%s?secret=%s',
                 $userAndHost,
-                $user->getGoogleAuthenticatorSecret()
+                $token->getSecret()
             );
         }
         return $encoder.urlencode($encoderURL);

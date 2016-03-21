@@ -8,6 +8,7 @@
 
 namespace Dayspring\LoginBundle\Security;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,13 +26,16 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
 
     protected $container;
 
+    protected $logger;
+
     /**
      * UsernamePasswordAuthenticator constructor.
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger = null)
     {
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     protected function getLoginUrl()
@@ -92,7 +96,10 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $this->container->get('logger')->debug("getUser", $credentials);
+        if (null !== $this->logger) {
+            $this->logger->debug("getUser", $credentials);
+        }
+
         if (null === $credentials['user']) {
             throw new UsernameNotFoundException();
         }
@@ -108,7 +115,9 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-        $this->container->get('logger')->debug("checkCredentials", $credentials);
+        if (null !== $this->logger) {
+            $this->logger->debug("checkCredentials", $credentials);
+        }
 
         $oneTime = $credentials['one_time'];
         $user = $credentials['user'];
@@ -137,7 +146,9 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         $tokenStorage = $this->container->get('security.token_storage');
         $tokenStorage->setToken($exception->getToken());
 
-        $this->container->get('logger')->debug("onAuthenticationFailure setting token");
+        if (null !== $this->logger) {
+            $this->logger->debug("onAuthenticationFailure setting token");
+        }
 
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
         $url = $this->getLoginUrl();

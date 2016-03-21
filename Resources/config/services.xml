@@ -14,7 +14,9 @@
             <argument type="service" id="service_container" />
         </service>
         <service id="dayspring_login.totp_authenticator_helper" class="Dayspring\LoginBundle\Security\TotpAuthenticatorHelper">
-
+            <call method="setIssuer">
+                <argument>%dayspring_login.totp_issuer%</argument>
+            </call>
         </service>
     </services>
 </container>

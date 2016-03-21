@@ -103,6 +103,11 @@ class UserAccountController extends Controller
             if ($totpHelper->checkCode($token, $data['code'])) {
                 $token->setActive(true);
                 $token->save();
+
+                $authToken = $this->get('dayspring_login.totp_authenticator')
+                    ->createAuthenticatedToken($this->getUser(), "secured_area");
+                $this->get("security.token_storage")->setToken($authToken);
+
                 return $this->redirect($this->generateUrl('account_two_factor'));
             } else {
                 $form->get('code')->addError(new FormError("Incorrect code"));
