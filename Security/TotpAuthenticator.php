@@ -47,7 +47,7 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
     protected function getDefaultSuccessRedirectUrl()
     {
         return $this->container->get('router')
-            ->generate('demo_secure');
+            ->generate('account_dashboard');
     }
 
     /**

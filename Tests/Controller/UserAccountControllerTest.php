@@ -118,4 +118,116 @@ class UserAccountControllerTest extends WebTestCase
             $crawler->filter('html:contains("Active")')->count()
         );
     }
+
+    public function testTwoFactorLogin()
+    {
+        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $totpHelper = static::$kernel->getContainer()->get('dayspring_login.totp_authenticator_helper');
+
+        $this->user = new User();
+        $this->user->setEmail(sprintf("test+%s@test.com", microtime()));
+        $encoded = $encoder->encodePassword($this->user, 'password');
+        $this->user->setPassword($encoded);
+        $this->user->save();
+
+        $token = new UserTotpToken();
+        $token->setUser($this->user);
+        $token->setName("My secret");
+        $token->setSecret($totpHelper->generateSecret());
+        $token->setActive(true);
+        $token->save();
+
+        $crawler = $this->client->request("GET", "/login");
+
+        $form = $crawler->selectButton('Log in')->form();
+        $form['_username'] = $this->user->getUsername();
+        $form['_password'] = 'password';
+
+        $crawler = $this->client->submit($form);
+
+        // redirect to dashboard
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        // redirect to totp_login
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Enter MFA Token")')->count()
+        );
+
+        $form = $crawler->selectButton('Submit')->form();
+        $form['_one_time'] = $totpHelper->generateCode($token);
+
+        $crawler = $this->client->submit($form);
+
+        // redirect to dashboard
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Dashboard")')->count()
+        );
+    }
+
+    public function testTwoFactorLoginBadMFA()
+    {
+        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $totpHelper = static::$kernel->getContainer()->get('dayspring_login.totp_authenticator_helper');
+
+        $this->user = new User();
+        $this->user->setEmail(sprintf("test+%s@test.com", microtime()));
+        $encoded = $encoder->encodePassword($this->user, 'password');
+        $this->user->setPassword($encoded);
+        $this->user->save();
+
+        $token = new UserTotpToken();
+        $token->setUser($this->user);
+        $token->setName("My secret");
+        $token->setSecret($totpHelper->generateSecret());
+        $token->setActive(true);
+        $token->save();
+
+        $crawler = $this->client->request("GET", "/login");
+
+        $form = $crawler->selectButton('Log in')->form();
+        $form['_username'] = $this->user->getUsername();
+        $form['_password'] = 'password';
+
+        $crawler = $this->client->submit($form);
+
+        // redirect to dashboard
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        // redirect to totp_login
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Enter MFA Token")')->count()
+        );
+
+        $form = $crawler->selectButton('Submit')->form();
+        $form['_one_time'] = '123456';
+
+        $crawler = $this->client->submit($form);
+
+        // redirect to totp_login
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        // redirect to login
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Invalid token")')->count()
+        );
+    }
 }
