@@ -8,7 +8,6 @@
 
 namespace Dayspring\LoginBundle\Security;
 
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +34,6 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         $this->container = $container;
     }
 
-
     protected function getLoginUrl()
     {
         return $this->container->get('router')
@@ -48,23 +46,25 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
             ->generate('demo_secure');
     }
 
+    /**
+     * Intercept login check request and get the MFA token from the request.
+     * Check if user has MFA configured but has not provided their token.
+     *
+     * @param Request $request
+     * @return array|void
+     */
     public function getCredentials(Request $request)
     {
-        $token = $this->container->get('security.token_storage')->getToken();
-
         if ($request->getPathInfo() == '/totp_login') {
-            $this->container->get('logger')->debug('getCredentials matched /totp_login');
             return;
         }
 
-
-        $this->container->get('logger')->debug('getCredentials');
+        $token = $this->container->get('security.token_storage')->getToken();
 
         if ($request->getPathInfo() == '/_totp_login_check') {
             $oneTime = $request->request->get('_one_time');
 
             return array(
-                'token' => $token,
                 'user' => $token ? $token->getUser() : null,
                 'one_time' => $oneTime
             );
@@ -83,6 +83,13 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         return;
     }
 
+    /**
+     * Refresh user found in the username/password token.
+     *
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return UserInterface
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $this->container->get('logger')->debug("getUser", $credentials);
@@ -92,6 +99,13 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         return $userProvider->refreshUser($credentials['user']);
     }
 
+    /**
+     * Check the user's MFA token against their active secrets
+     *
+     * @param mixed $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         $this->container->get('logger')->debug("checkCredentials", $credentials);
@@ -104,7 +118,6 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
         if (!$helper->checkUserCodes($user, $oneTime)) {
             // throw any AuthenticationException
             $e = new AuthenticationException("Invalid token");
-            $e->setToken($credentials['token']);
             throw $e;
         }
 
@@ -134,8 +147,7 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
 
 
     /**
-     * Shortcut to create a PostAuthenticationGuardToken for you, if you don't really
-     * care about which authenticated token you're using.
+     * Create a TotpToken which identifies that the user provided their MFA token.
      *
      * @param UserInterface $user
      * @param string        $providerKey
