@@ -80,5 +80,4 @@ class UsernamePasswordAuthenticator extends AbstractFormLoginAuthenticator
 
         return true;
     }
-
 }

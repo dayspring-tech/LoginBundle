@@ -16,5 +16,4 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
  */
 class TotpToken extends PostAuthenticationGuardToken
 {
-
 }

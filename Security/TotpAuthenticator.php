@@ -162,5 +162,4 @@ class TotpAuthenticator extends AbstractFormLoginAuthenticator
             $user->getRoles()
         );
     }
-
 }
