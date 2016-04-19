@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jwong
- * Date: 3/17/16
- * Time: 2:50 PM
- */
-
 namespace Dayspring\LoginBundle\Tests\Controller;
 
+use Dayspring\LoginBundle\Model\RoleQuery;
+use Dayspring\LoginBundle\Model\RoleUserQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 use Dayspring\LoginBundle\Tests\WebTestCase;
@@ -28,7 +23,7 @@ class UserAccountControllerTest extends WebTestCase
         $this->client = self::createClient();
     }
 
-    protected function createUserAndLogin()
+    protected function createUserAndLogin($isAdmin = false)
     {
         $encoder = static::$kernel->getContainer()->get('security.password_encoder');
 
@@ -36,6 +31,10 @@ class UserAccountControllerTest extends WebTestCase
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
         $user->setPassword($encoded);
+        if ($isAdmin) {
+            $adminRole = RoleQuery::create()->filterByRoleName("ROLE_Admin")->findOneOrCreate();
+            $user->addRole($adminRole);
+        }
         $user->save();
 
         $crawler = $this->client->request("GET", "/login");
@@ -57,5 +56,26 @@ class UserAccountControllerTest extends WebTestCase
             0,
             $crawler->filter('html:contains("Dashboard")')->count()
         );
+    }
+
+    public function testUsers()
+    {
+        $this->createUserAndLogin(true);
+
+        $crawler = $this->client->request("GET", "/users");
+
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Users")')->count()
+        );
+    }
+
+    public function testUsersNotAllowed()
+    {
+        $this->createUserAndLogin();
+
+        $crawler = $this->client->request("GET", "/users");
+
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 }
