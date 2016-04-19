@@ -32,6 +32,14 @@ class User extends BaseUser implements UserInterface
     }
 
     /**
+     * @Assert\Email()
+     */
+    public function getEmail()
+    {
+        return parent::getEmail();
+    }
+
+    /**
      * @Assert\Length(
      *      min = 8,
      *      max = 50,
