@@ -9,6 +9,11 @@
             "name":     "Jeffrey Wong",
             "email":    "jwong@dayspring-tech.com",
             "homepage": "http://dayspring-tech.com"
+        },
+        {
+            "name":     "Matt Crawford",
+            "email":    "mcrawford@dayspring-tech.com",
+            "homepage": "http://dayspring-tech.com"
         }
     ],
     "require": {
