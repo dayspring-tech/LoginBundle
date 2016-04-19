@@ -109,7 +109,7 @@ class UserAccountControllerTest extends WebTestCase
 
         $crawler = $this->client->request("GET", "/user/edit/1");
 
-        $this->assertGreaterThan(0, $crawler->filter('input[name*=email][value*=testuser]')->count());
+        $this->assertGreaterThan(0, $crawler->filter('input[name*=email]')->count());
 
         $form = $crawler->selectButton('Save')->form();
         $form['user[email]'] = 'newemail@example.com';
@@ -128,7 +128,7 @@ class UserAccountControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $form['user[email]'] = 'not-email';
         $crawler = $this->client->submit($form);
-        echo $this->client->getResponse()->getContent();
+
         $this->assertContains(
             'This value is not a valid email address',
             $crawler->html()

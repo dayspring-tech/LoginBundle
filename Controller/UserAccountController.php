@@ -27,7 +27,7 @@ class UserAccountController extends Controller
      */
     public function usersAction()
     {
-        $userService = $this->get('dayspring_login.user_service');
+        $userService = $this->get('dayspring_login.user_provider');
         $users = $userService->getUsers();
 
         return $this->render('DayspringLoginBundle:UserAccount:list.html.twig', array('users' => $users));
@@ -40,7 +40,7 @@ class UserAccountController extends Controller
      */
     public function editUserAction(Request $request, $userId)
     {
-        $userService = $this->get('dayspring_login.user_service');
+        $userService = $this->get('dayspring_login.user_provider');
         if ($userId) {
             $user = $userService->loadUserById($userId);
         } else {

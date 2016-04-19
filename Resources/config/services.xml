@@ -7,7 +7,5 @@
     <services>
         <service id="dayspring_login.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
         </service>
-        <service id="dayspring_login.user_service" class="Dayspring\LoginBundle\Service\UserService">
-        </service>
     </services>
 </container>
