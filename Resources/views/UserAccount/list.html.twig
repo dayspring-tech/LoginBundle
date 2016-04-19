@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+    <div class="row padding-bottom">
+        <div class="col-md-4 col-md-offset-4">
+            {% include "::sessionFlash.html.twig" %}
+
+            <h1>Users</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td><a href="{{ path('edit_user', {'userId': user.id}) }}">{{ user.email }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p><a href="{{  path('new_user') }}">Create User</a></p>
+
+        </div>
+    </div>
+{% endblock %}
+
+

@@ -62,4 +62,21 @@ class DayspringUserProvider implements UserProviderInterface
 
         return $user;
     }
+
+    /**
+     * @param $userId
+     * @return User
+     */
+    public function loadUserById($userId)
+    {
+        return UserQuery::create()->findPk($userId);
+    }
+
+    /**
+     * @return PropelObjectCollection
+     */
+    public function getUsers()
+    {
+        return UserQuery::create()->orderByEmail()->find();
+    }
 }
