@@ -86,6 +86,23 @@ class UserAccountControllerTest extends WebTestCase
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
+    public function testCreateUser()
+    {
+        $this->loginAdminUser();
+
+        $crawler = $this->client->request("GET", "/user/new");
+
+        $this->assertGreaterThan(0, $crawler->filter('input[name*=email]')->count());
+
+        $form = $crawler->selectButton('Save')->form();
+        $email = 'email_'.microtime(true).'@example.com';
+        $form['user[email]'] = $email;
+        $crawler = $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/users'));
+        $this->assertEquals(1, UserQuery::create()->filterByEmail($email)->count());
+    }
+
     public function testEditUser()
     {
         $this->loginAdminUser();
@@ -111,7 +128,10 @@ class UserAccountControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $form['user[email]'] = 'not-email';
         $crawler = $this->client->submit($form);
-
-        $this->assertGreaterThan(0, $crawler->filter('.has-error input[name*=email]')->count());
+        echo $this->client->getResponse()->getContent();
+        $this->assertContains(
+            'This value is not a valid email address',
+            $crawler->html()
+        );
     }
 }

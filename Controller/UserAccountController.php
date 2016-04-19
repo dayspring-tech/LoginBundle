@@ -2,6 +2,7 @@
 namespace Dayspring\LoginBundle\Controller;
 
 use Dayspring\LoginBundle\Form\Type\UserType;
+use Dayspring\LoginBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -34,12 +35,17 @@ class UserAccountController extends Controller
 
     /**
      * @Route("/user/edit/{userId}", name="edit_user")
+     * @Route("/user/new", name="new_user", defaults={"userId" = null})
      * @Security("is_granted('ROLE_Admin')")
      */
     public function editUserAction(Request $request, $userId)
     {
         $userService = $this->get('dayspring_login.user_service');
-        $user = $userService->loadUserById($userId);
+        if ($userId) {
+            $user = $userService->loadUserById($userId);
+        } else {
+            $user = new User();
+        }
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
@@ -53,6 +59,12 @@ class UserAccountController extends Controller
             return $this->redirectToRoute('list_users');
         }
 
-        return $this->render('DayspringLoginBundle:UserAccount:edit.html.twig', array('form' => $form->createView()));
+        return $this->render(
+            'DayspringLoginBundle:UserAccount:edit.html.twig',
+            array(
+                'form' => $form->createView(),
+                'title' => $userId ? 'Edit User' : 'Create New User'
+            )
+        );
     }
 }
