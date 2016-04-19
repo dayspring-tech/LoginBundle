@@ -20,10 +20,12 @@ class UserAccountControllerTest extends WebTestCase
     {
         parent::setUp();
 
+        self::runCommand('propel:fixtures:load @DayspringLoginBundle --sql');
+
         $this->client = self::createClient();
     }
 
-    protected function createUserAndLogin($isAdmin = false)
+    protected function createUserAndLogin()
     {
         $encoder = static::$kernel->getContainer()->get('security.password_encoder');
 
@@ -31,16 +33,24 @@ class UserAccountControllerTest extends WebTestCase
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
         $user->setPassword($encoded);
-        if ($isAdmin) {
-            $adminRole = RoleQuery::create()->filterByRoleName("ROLE_Admin")->findOneOrCreate();
-            $user->addRole($adminRole);
-        }
+        $user->addRole(RoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
         $user->save();
 
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
         $form['_username'] = $user->getUsername();
+        $form['_password'] = 'password';
+
+        $crawler = $this->client->submit($form);
+    }
+
+    protected function loginAdminUser()
+    {
+        $crawler = $this->client->request("GET", "/login");
+
+        $form = $crawler->selectButton('Log in')->form();
+        $form['_username'] = 'admin@example.com';
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);
@@ -60,14 +70,11 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testUsers()
     {
-        $this->createUserAndLogin(true);
+        $this->loginAdminUser();
 
         $crawler = $this->client->request("GET", "/users");
 
-        $this->assertGreaterThan(
-            0,
-            $crawler->filter('html:contains("Users")')->count()
-        );
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("Users")')->count());
     }
 
     public function testUsersNotAllowed()
@@ -77,5 +84,34 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/users");
 
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testEditUser()
+    {
+        $this->loginAdminUser();
+
+        $crawler = $this->client->request("GET", "/user/edit/1");
+
+        $this->assertGreaterThan(0, $crawler->filter('input[name*=email][value*=testuser]')->count());
+
+        $form = $crawler->selectButton('Save')->form();
+        $form['user[email]'] = 'newemail@example.com';
+        $crawler = $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/users'));
+        $this->assertEquals('newemail@example.com', UserQuery::create()->findPk(1)->getEmail());
+    }
+
+    public function testUserValidation()
+    {
+        $this->loginAdminUser();
+
+        $crawler = $this->client->request("GET", "/user/edit/1");
+
+        $form = $crawler->selectButton('Save')->form();
+        $form['user[email]'] = 'not-email';
+        $crawler = $this->client->submit($form);
+
+        $this->assertGreaterThan(0, $crawler->filter('.has-error input[name*=email]')->count());
     }
 }

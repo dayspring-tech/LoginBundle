@@ -18,7 +18,7 @@
                 <tbody>
                     {% for user in users %}
                         <tr>
-                            <td>{{ user.email }}</td>
+                            <td><a href="{{ path('edit_user', {'userId': user.id}) }}">{{ user.email }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
