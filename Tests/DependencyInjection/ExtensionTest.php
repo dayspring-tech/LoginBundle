@@ -24,7 +24,7 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->compileContainer($container);
 
-        $this->assertEquals(3, count($container->getParameterBag()->all()), '->load() loads the services.xml file');
+        $this->assertEquals(5, count($container->getParameterBag()->all()), '->load() loads the services.xml file');
 
         $this->assertEquals(1, count($container->getDefinitions()));
     }

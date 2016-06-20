@@ -29,3 +29,6 @@ propel:
     phing_path: "%kernel.root_dir%/../../vendor/phing"
     build_properties:
         propel.php.dir: "/"
+
+swiftmailer:
+    disable_delivery: true

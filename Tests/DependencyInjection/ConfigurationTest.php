@@ -22,6 +22,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $configuration = new Configuration(array());
         $config = $processor->processConfiguration($configuration, array($config));
 
-        $this->assertEquals(array(), $config, 'The config is just an empty array');
+        $this->assertEquals(array(
+            'from_address' => 'nobody@dayspring-tech.com',
+            'from_display_name' => 'Test Application'
+        ), $config, 'Config should have from_address and from_display_name');
     }
 }
