@@ -24,6 +24,9 @@ class DayspringLoginExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('login_bundle.from_address', $config['from_address']);
+        $container->setParameter('login_bundle.from_display_name', $config['from_display_name']);
+
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
     }
