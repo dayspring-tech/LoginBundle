@@ -22,7 +22,7 @@ class TestKernel extends Kernel
 //            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 //            new \Symfony\Bundle\AsseticBundle\AsseticBundle(),
-            new \Propel\PropelBundle\PropelBundle(),
+            new \Propel\Bundle\PropelBundle(),
 //            new \Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new \Dayspring\LoginBundle\DayspringLoginBundle(),
 
