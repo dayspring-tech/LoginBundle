@@ -10,6 +10,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class User extends BaseUser implements UserInterface
 {
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->setCreatedDate(new DateTime());
+    }
+
     public function getUsername()
     {
         return $this->getEmail();

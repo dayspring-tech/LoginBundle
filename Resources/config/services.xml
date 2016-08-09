@@ -7,5 +7,10 @@
     <services>
         <service id="dayspring_login.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
         </service>
+
+        <service id="dayspring_login.success_handler" class="Dayspring\LoginBundle\Security\AuthenticationSuccessHandler" parent="security.authentication.success_handler">
+
+        </service>
+
     </services>
 </container>

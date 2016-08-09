@@ -26,6 +26,7 @@ security:
                 login_path: _login
                 default_target_path: /_demo/secure
                 provider: dayspring
+                success_handler: dayspring_login.success_handler
             logout:
                 path:   _logout
                 target: /
@@ -47,3 +48,4 @@ Example:
   <column name="last_name" type="VARCHAR" size="100"/>
 </table>
 ```
+
