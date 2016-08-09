@@ -44,7 +44,6 @@ class DayspringUserProviderTest extends WebTestCase
         $user->setEmail('testuser@example.com');
 
         $refreshedUser = $this->userProvider->refreshUser($user);
-
         $this->assertEquals(1, $refreshedUser->getId());
         $this->assertEquals('testuser@example.com', $refreshedUser->getUsername());
     }

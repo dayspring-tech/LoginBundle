@@ -25,6 +25,8 @@ class DayspringUserProvider implements UserProviderInterface
             throw new UsernameNotFoundException(
                 sprintf('Username "%s" does not exist.', $username)
             );
+        } else {
+            $user->reload();
         }
 
         return $user;
