@@ -43,9 +43,11 @@ class ForgotResetController extends Controller
                 $data = array(
                     'user' => $user
                 );
+                $fromAddress = $this->getParameter('login_bundle.from_address');
+                $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
                 $message = \Swift_Message::newInstance()
                     ->setSubject($subject)
-                    ->setFrom(array($this->getParameter('login_bundle.from_address') => $this->getParameter('login_bundle.from_display_name')))
+                    ->setFrom(array($fromAddress => $fromDisplayName))
                     ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(
