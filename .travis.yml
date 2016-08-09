@@ -36,8 +36,8 @@ install:
     - composer update ${COMPOSER_FLAGS} --prefer-source
 
 before_script:
-  - mysql -e "create database mydatabase;"
-  - mysql -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
+  - mysql -u root -e "create database mydatabase;"
+  - mysql -u root -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
 
 script:
     - vendor/bin/phpunit --colors
