@@ -56,6 +56,31 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
     }
 
+    public function testLastLoginDate()
+    {
+        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+
+        $user = new User();
+        $user->setEmail(sprintf("test+%s@test.com", microtime()));
+        $encoded = $encoder->encodePassword($user, 'password');
+        $user->setPassword($encoded);
+        $user->addRole(RoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
+        $user->save();
+
+        $this->assertNull($user->getLastLoginDate());
+
+        $crawler = $this->client->request("GET", "/login");
+
+        $form = $crawler->selectButton('Log in')->form();
+        $form['_username'] = $user->getUsername();
+        $form['_password'] = 'password';
+
+        $crawler = $this->client->submit($form);
+
+        $user->reload();
+        $this->assertNotNull($user->getLastLoginDate());
+    }
+
     public function testDashboard()
     {
         $this->createUserAndLogin();

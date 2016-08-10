@@ -85,4 +85,16 @@ class UserTest extends WebTestCase
 
         $user->delete();
     }
+
+    public function testCreateUser()
+    {
+        $user = new User();
+        $user->setEmail(sprintf("user+%s@test.com", microtime()));
+        $user->save();
+
+        $user->reload(true);
+
+        $this->assertNotNull($user->getCreatedDate());
+        $this->assertNull($user->getLastLoginDate());
+    }
 }
