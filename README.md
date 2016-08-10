@@ -1,4 +1,5 @@
 # Dayspring Login Bundle
+[![Build Status](https://travis-ci.org/dayspring-tech/LoginBundle.svg?branch=master)](https://travis-ci.org/dayspring-tech/LoginBundle)
 
 This bundle provides basic username/password authentication, forgot/reset password, and change password.
 
