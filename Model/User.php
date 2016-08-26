@@ -30,7 +30,7 @@ class User extends BaseUser implements UserInterface
 
     public function getRoles($criteria = null, PropelPDO $con = null)
     {
-        $dbRoles = parent::getRoles($criteria, $con);
+        $dbRoles = parent::getSecurityRoles($criteria, $con);
 
         $roles = [];
         foreach ($dbRoles as $r) {

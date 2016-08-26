@@ -1,7 +1,7 @@
 <?php
 namespace Dayspring\LoginBundle\Tests\Controller;
 
-use Dayspring\LoginBundle\Model\RoleQuery;
+use Dayspring\LoginBundle\Model\SecurityRoleQuery;
 use Dayspring\LoginBundle\Model\RoleUserQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
@@ -33,7 +33,7 @@ class UserAccountControllerTest extends WebTestCase
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
         $user->setPassword($encoded);
-        $user->addRole(RoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
+        $user->addSecurityRole(SecurityRoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
         $user->save();
 
         $crawler = $this->client->request("GET", "/login");
@@ -64,7 +64,7 @@ class UserAccountControllerTest extends WebTestCase
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
         $user->setPassword($encoded);
-        $user->addRole(RoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
+        $user->addSecurityRole(SecurityRoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
         $user->save();
 
         $this->assertNull($user->getLastLoginDate());
