@@ -8,7 +8,7 @@
 
 namespace Dayspring\LoginBundle\Tests\Model;
 
-use Dayspring\LoginBundle\Model\Role;
+use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Tests\WebTestCase;
 
@@ -35,9 +35,9 @@ class UserTest extends WebTestCase
         $user = new User();
         $user->setEmail('helloworld');
 
-        $r = new Role();
+        $r = new SecurityRole();
         $r->setRoleName("ROLE_TEST");
-        $user->addRole($r);
+        $user->addSecurityRole($r);
 
         $this->assertEquals(1, count($user->getRoles()));
         $this->assertEquals(array("ROLE_TEST"), $user->getRoles());
