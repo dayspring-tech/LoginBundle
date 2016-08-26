@@ -19,7 +19,7 @@
             <parameter name="Engine" value="InnoDB"/>
         </vendor>
     </table>
-    <table name="roles" phpName="Role" idMethod="native">
+    <table name="roles" phpName="SecurityRole" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="role_name" phpName="RoleName" type="VARCHAR" size="50" required="true"/>
         <vendor type="mysql">
