@@ -95,8 +95,8 @@ class ForgotResetControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton("Save")->form();
-        $form['reset_password[password][first]'] = null;
-        $form['reset_password[password][second]'] = null;
+        $form['reset_password[password][first]'] = '';
+        $form['reset_password[password][second]'] = '';
         $crawler = $this->client->submit($form);
         $this->assertFalse($this->client->getResponse()->isRedirect());
 
