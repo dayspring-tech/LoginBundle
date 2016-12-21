@@ -26,10 +26,7 @@ class ResetPasswordType extends AbstractType
             'required' => true,
             'options' => array('attr' => array('class' => 'password-field')),
             'first_options' => array('label' => 'Password'),
-            'second_options' => array('label' => 'Repeat Password'),
-            'constraints' => new NotBlank(array(
-                "message" => "You must enter a new password"
-            ))
+            'second_options' => array('label' => 'Repeat Password')
         ));
     }
 

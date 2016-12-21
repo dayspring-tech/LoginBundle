@@ -68,6 +68,7 @@ class User extends BaseUser implements AdvancedUserInterface
     }
 
     /**
+     * @Assert\NotBlank(message="You must enter a new password")
      * @Assert\Length(
      *      min = 8,
      *      max = 50,
