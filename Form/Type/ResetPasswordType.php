@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ResetPasswordType extends AbstractType
 {
@@ -26,9 +27,9 @@ class ResetPasswordType extends AbstractType
             'options' => array('attr' => array('class' => 'password-field')),
             'first_options' => array('label' => 'Password'),
             'second_options' => array('label' => 'Repeat Password'),
-            'constraints' => new NotBlank(
-                "Password field required"
-            )
+            'constraints' => new NotBlank(array(
+                "message" => "You must enter a new password"
+            ))
         ));
     }
 
