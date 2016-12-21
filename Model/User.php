@@ -5,18 +5,37 @@ namespace Dayspring\LoginBundle\Model;
 use DateTime;
 use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User extends BaseUser implements UserInterface
+class User extends BaseUser implements AdvancedUserInterface
 {
-
     /**
      * User constructor.
      */
     public function __construct()
     {
         $this->setCreatedDate(new DateTime());
+    }
+
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return $this->getIsActive();
     }
 
     public function getUsername()
@@ -49,6 +68,10 @@ class User extends BaseUser implements UserInterface
     }
 
     /**
+     * @Assert\NotBlank(
+     *     message="You must enter a new password",
+     *     groups={"password"}
+     * )
      * @Assert\Length(
      *      min = 8,
      *      max = 50,

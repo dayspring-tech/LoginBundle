@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Client;
 
 class UserAccountControllerTest extends WebTestCase
 {
-
     /**
      * @var Client
      */
@@ -54,6 +53,35 @@ class UserAccountControllerTest extends WebTestCase
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);
+    }
+
+    public function testInactiveUser()
+    {
+        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+
+        $user = new User();
+        $user
+            ->setEmail("test-inactive-user@example.com")
+            ->setPassword("password")
+            ->setIsActive(false);
+
+        $encoded = $encoder->encodePassword($user, 'password');
+        $user
+            ->setPassword($encoded)
+            ->save();
+
+        $crawler = $this->client->request("GET", "/login");
+
+        $form = $crawler->selectButton('Log in')->form();
+        $form['_username'] = $user->getUsername();
+        $form['_password'] = 'password';
+        $crawler = $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+        $this->assertCount(1, $crawler->filter("div.alert-danger:contains('User account is disabled')"));
+
+        $user->delete();
     }
 
     public function testLastLoginDate()

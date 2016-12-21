@@ -12,6 +12,8 @@
         <column name="reset_token_expire" phpName="ResetTokenExpire" type="TIMESTAMP" required="false"/>
         <column name="created_date" phpName="CreatedDate" type="TIMESTAMP" required="false"/>
         <column name="last_login_date" phpName="LastLoginDate" type="TIMESTAMP" required="false"/>
+        <column name="is_active" phpName="IsActive" type="BOOLEAN" required="true" default="true"/>
+
         <unique name="user_username_UNIQUE">
             <unique-column name="email"/>
         </unique>
