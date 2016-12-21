@@ -35,7 +35,7 @@ class User extends BaseUser implements AdvancedUserInterface
 
     public function isEnabled()
     {
-        return $this->isActive;
+        return $this->getIsActive();
     }
 
     public function getUsername()
