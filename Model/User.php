@@ -3,12 +3,13 @@
 namespace Dayspring\LoginBundle\Model;
 
 use DateTime;
+use JsonSerializable;
 use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User extends BaseUser implements AdvancedUserInterface
+class User extends BaseUser implements AdvancedUserInterface, JsonSerializable
 {
     /**
      * User constructor.
@@ -105,5 +106,26 @@ class User extends BaseUser implements AdvancedUserInterface
             $this->save();
         }
         return parent::getResetToken();
+    }
+
+    /**
+     * Specify data which should be serialized to JSON.
+     * If using concrete inheritance as described in the README, implement JsonSerializable on the child object to
+     * override how User is serialized.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        if (method_exists($this, 'getChildObject') && $this->getChildObject() instanceof JsonSerializable) {
+            return $this->getChildObject()->jsonSerialize();
+        }
+
+        return array(
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'createdDate' => $this->getCreatedDate(DateTime::ATOM),
+            'lastLoginDate' => $this->getLastLoginDate(DateTime::ATOM),
+        );
     }
 }

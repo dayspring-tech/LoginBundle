@@ -97,4 +97,59 @@ class UserTest extends WebTestCase
         $this->assertNotNull($user->getCreatedDate());
         $this->assertNull($user->getLastLoginDate());
     }
+
+    public function testJsonSerialize()
+    {
+        $email = sprintf("user+%s@test.com", microtime());
+
+        $user = new User();
+        $user->setEmail($email);
+
+        $expectedJson = sprintf(
+            '{"id":null,"email":"%s","createdDate":"%s","lastLoginDate":null}',
+            $email,
+            $user->getCreatedDate(\DateTime::ATOM)
+        );
+        $this->assertJsonStringEqualsJsonString($expectedJson, json_encode($user));
+
+        $obj = json_decode(json_encode($user));
+        $this->assertNull($obj->id);
+        $this->assertEquals($email, $obj->email);
+    }
+
+    public function testJsonSerializeSaved()
+    {
+        $email = sprintf("user+%s@test.com", microtime());
+
+        $user = new User();
+        $user->setEmail($email);
+        $user->save();
+
+        $expectedJson = sprintf(
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s"}',
+            $user->getId(),
+            $email,
+            $user->getCreatedDate(\DateTime::ATOM),
+            $user->getLastLoginDate(\DateTime::ATOM)
+        );
+        $this->assertJsonStringEqualsJsonString($expectedJson, json_encode($user));
+
+        $obj = json_decode(json_encode($user));
+        $this->assertEquals($user->getId(), $obj->id);
+        $this->assertEquals($email, $obj->email);
+        $this->assertEquals($user->getCreatedDate(\DateTime::ATOM), $obj->createdDate);
+        $this->assertEquals($user->getLastLoginDate(\DateTime::ATOM), $obj->lastLoginDate);
+
+        $now = new \DateTime();
+        $user->setLastLoginDate($now);
+
+        $expectedJson = sprintf(
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s"}',
+            $user->getId(),
+            $email,
+            $user->getCreatedDate(\DateTime::ATOM),
+            $now->format(\DateTime::ATOM)
+        );
+        $this->assertJsonStringEqualsJsonString($expectedJson, json_encode($user));
+    }
 }
