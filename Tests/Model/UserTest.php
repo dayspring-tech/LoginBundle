@@ -1,14 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jwong
- * Date: 3/17/16
- * Time: 11:35 AM
- */
 
 namespace Dayspring\LoginBundle\Tests\Model;
 
 use Dayspring\LoginBundle\Model\SecurityRole;
+use Dayspring\LoginBundle\Model\SecurityRoleQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Tests\WebTestCase;
 
@@ -106,7 +101,7 @@ class UserTest extends WebTestCase
         $user->setEmail($email);
 
         $expectedJson = sprintf(
-            '{"id":null,"email":"%s","createdDate":"%s","lastLoginDate":null}',
+            '{"id":null,"email":"%s","createdDate":"%s","lastLoginDate":null,"securityRoles":{}}',
             $email,
             $user->getCreatedDate(\DateTime::ATOM)
         );
@@ -126,7 +121,7 @@ class UserTest extends WebTestCase
         $user->save();
 
         $expectedJson = sprintf(
-            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s"}',
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s","securityRoles":{}}',
             $user->getId(),
             $email,
             $user->getCreatedDate(\DateTime::ATOM),
@@ -144,7 +139,53 @@ class UserTest extends WebTestCase
         $user->setLastLoginDate($now);
 
         $expectedJson = sprintf(
-            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s"}',
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s","securityRoles":{}}',
+            $user->getId(),
+            $email,
+            $user->getCreatedDate(\DateTime::ATOM),
+            $now->format(\DateTime::ATOM)
+        );
+        $this->assertJsonStringEqualsJsonString($expectedJson, json_encode($user));
+
+        $user->delete();
+    }
+
+    public function testJsonSerializeRoles()
+    {
+        $email = sprintf("user+%s@test.com", microtime());
+
+        $user = new User();
+        $user->setEmail($email);
+
+        $securityRole = SecurityRoleQuery::create()
+            ->filterByRoleName("ROLE_USER")
+            ->findOneOrCreate();
+        $securityRole
+            ->save();
+        $user->addSecurityRole($securityRole);
+
+        $user->save();
+
+        $expectedJson = sprintf(
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s","securityRoles":{"0":"ROLE_USER"}}',
+            $user->getId(),
+            $email,
+            $user->getCreatedDate(\DateTime::ATOM),
+            $user->getLastLoginDate(\DateTime::ATOM)
+        );
+        $this->assertJsonStringEqualsJsonString($expectedJson, json_encode($user));
+
+        $obj = json_decode(json_encode($user));
+        $this->assertEquals($user->getId(), $obj->id);
+        $this->assertEquals($email, $obj->email);
+        $this->assertEquals($user->getCreatedDate(\DateTime::ATOM), $obj->createdDate);
+        $this->assertEquals($user->getLastLoginDate(\DateTime::ATOM), $obj->lastLoginDate);
+
+        $now = new \DateTime();
+        $user->setLastLoginDate($now);
+
+        $expectedJson = sprintf(
+            '{"id":%d,"email":"%s","createdDate":"%s","lastLoginDate":"%s","securityRoles":{"0":"ROLE_USER"}}',
             $user->getId(),
             $email,
             $user->getCreatedDate(\DateTime::ATOM),

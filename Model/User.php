@@ -126,6 +126,7 @@ class User extends BaseUser implements AdvancedUserInterface, JsonSerializable
             'email' => $this->getEmail(),
             'createdDate' => $this->getCreatedDate(DateTime::ATOM),
             'lastLoginDate' => $this->getLastLoginDate(DateTime::ATOM),
+            'securityRoles' => $this->getSecurityRoles(),
         );
     }
 }
