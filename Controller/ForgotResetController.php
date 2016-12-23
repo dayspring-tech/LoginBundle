@@ -37,32 +37,39 @@ class ForgotResetController extends Controller
             try {
                 $user = $userProvider->loadUserByUsername($email);
 
-                $user->generateResetToken();
+                if ($user->getIsActive()) {
+                    $user->generateResetToken();
 
-                $subject = "Reset Password";
-                $data = array(
-                    'user' => $user
-                );
-                $fromAddress = $this->getParameter('login_bundle.from_address');
-                $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
-                $message = \Swift_Message::newInstance()
-                    ->setSubject($subject)
-                    ->setFrom(array($fromAddress => $fromDisplayName))
-                    ->setTo($user->getEmail())
-                    ->setBody(
-                        $this->renderView(
-                            'DayspringLoginBundle:Emails:reset_password.html.twig',
-                            $data
-                        ),
-                        'text/html'
+                    $subject = "Reset Password";
+                    $data = array(
+                        'user' => $user
                     );
-                $this->get('mailer')->send($message);
+                    $fromAddress = $this->getParameter('login_bundle.from_address');
+                    $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
+                    $message = \Swift_Message::newInstance()
+                        ->setSubject($subject)
+                        ->setFrom(array($fromAddress => $fromDisplayName))
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                'DayspringLoginBundle:Emails:reset_password.html.twig',
+                                $data
+                            ),
+                            'text/html'
+                        );
+                    $this->get('mailer')->send($message);
 
-                $request->getSession()->getFlashBag()->add(
-                    "success",
-                    "Check your email for instructions on how to reset your password."
-                );
-                return $this->redirect($this->generateUrl('_login'));
+                    $request->getSession()->getFlashBag()->add(
+                        "success",
+                        "Check your email for instructions on how to reset your password."
+                    );
+                    return $this->redirect($this->generateUrl('_login'));
+                } else {
+                    $request->getSession()->getFlashBag()->add(
+                        "error",
+                        "User account is disabled."
+                    );
+                }
             } catch (UsernameNotFoundException $e) {
                 $request->getSession()->getFlashBag()->add(
                     "error",
@@ -70,8 +77,9 @@ class ForgotResetController extends Controller
                 );
             }
         }
+
         return array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
         );
     }
 

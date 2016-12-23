@@ -54,6 +54,33 @@ class ForgotResetControllerTest extends WebTestCase
         );
     }
 
+    public function testForgotPasswordDeactiveUser()
+    {
+        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+
+        $user = new User();
+        $user
+            ->setEmail("test-inactive-user@example.com")
+            ->setPassword("password")
+            ->setIsActive(false);
+
+        $encoded = $encoder->encodePassword($user, 'password');
+        $user
+            ->setPassword($encoded)
+            ->save();
+
+        $crawler = $this->client->request("GET", "/forgot-password");
+
+        $form = $crawler->selectButton("Submit")->form();
+        $form['form[email]'] = $user->getEmail();
+        $crawler = $this->client->submit($form);
+
+        $this->assertFalse($this->client->getResponse()->isRedirect());
+        $this->assertCount(1, $crawler->filter("div.alert-danger:contains('User account is disabled.')"));
+
+        $user->delete();
+    }
+
     public function testForgotPasswordUnknownUser()
     {
         $crawler = $this->client->request("GET", "/forgot-password");
