@@ -67,7 +67,7 @@ class ForgotResetController extends Controller
                 } else {
                     $request->getSession()->getFlashBag()->add(
                         "error",
-                        "User account is disabled"
+                        "User account is disabled."
                     );
                 }
             } catch (UsernameNotFoundException $e) {
