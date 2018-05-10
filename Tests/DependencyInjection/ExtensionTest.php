@@ -11,8 +11,9 @@ namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 use Dayspring\LoginBundle\DependencyInjection\DayspringLoginExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use PHPUnit\Framework\TestCase;
 
-class ExtensionTest extends \PHPUnit_Framework_TestCase
+class ExtensionTest extends TestCase
 {
 
     public function testLoadEmptyConfiguration()

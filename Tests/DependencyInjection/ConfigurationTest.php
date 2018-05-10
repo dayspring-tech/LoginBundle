@@ -10,8 +10,9 @@ namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 
 use Dayspring\LoginBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;
+use PHPUnit\Framework\TestCase;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
 
     public function testConfiguration()

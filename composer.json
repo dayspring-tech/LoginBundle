@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0",
         "symfony/framework-bundle": "~3.0",
         "sensio/framework-extra-bundle": "~5.0",
         "phing/phing": "^2.5",
