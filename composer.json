@@ -26,7 +26,8 @@
         "php": ">=7.0",
         "symfony/framework-bundle": "~3.0",
         "sensio/framework-extra-bundle": "~5.0",
-        "phing/phing": "^2.12",
+        "symfony/yaml": "^3.1",
+        "phing/phing": "^2.16",
         "propel/propel-bundle": "1.6.x-dev",
         "symfony/swiftmailer-bundle": "^2.6.4",
         "symfony/symfony": "~3.0"
