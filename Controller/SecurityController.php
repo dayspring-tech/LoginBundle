@@ -3,7 +3,6 @@
 namespace Dayspring\LoginBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class SecurityController extends Controller
@@ -11,18 +10,17 @@ class SecurityController extends Controller
 
     /**
      * @Route("/login", name="_login")
-     * @Template
      */
     public function loginAction()
     {
         $helper = $this->get('security.authentication_utils');
 
-        return array(
+        return $this->render('@DayspringLogin/Security/login.html.twig', array(
             // last username entered by the user (if any)
             'last_username' => $helper->getLastUsername(),
             // last authentication error (if any)
             'error' => $helper->getLastAuthenticationError(),
-        );
+        ));
     }
 
     /**

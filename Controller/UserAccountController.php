@@ -5,7 +5,6 @@ use Dayspring\LoginBundle\Form\Type\UserType;
 use Dayspring\LoginBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -18,7 +17,7 @@ class UserAccountController extends Controller
      */
     public function dashboardAction()
     {
-        return $this->render('DayspringLoginBundle:UserAccount:dashboard.html.twig');
+        return $this->render('@DayspringLogin/UserAccount/dashboard.html.twig');
     }
 
     /**
@@ -30,7 +29,7 @@ class UserAccountController extends Controller
         $userService = $this->get('dayspring_login.user_provider');
         $users = $userService->getUsers();
 
-        return $this->render('DayspringLoginBundle:UserAccount:list.html.twig', array('users' => $users));
+        return $this->render('@DayspringLogin/UserAccount/list.html.twig', array('users' => $users));
     }
 
     /**
@@ -60,7 +59,7 @@ class UserAccountController extends Controller
         }
 
         return $this->render(
-            'DayspringLoginBundle:UserAccount:edit.html.twig',
+            '@DayspringLogin/UserAccount/edit.html.twig',
             array(
                 'form' => $form->createView(),
                 'title' => $userId ? 'Edit User' : 'Create New User'

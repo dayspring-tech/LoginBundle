@@ -28,6 +28,8 @@ class UserTest extends WebTestCase
         $user = new User();
 
         $user->eraseCredentials();
+
+        $this->assertEquals(true, true);
     }
 
     public function testGetRoles()
@@ -81,7 +83,7 @@ class UserTest extends WebTestCase
 
         $this->assertEquals("thisismyresettoken", $token);
         $this->assertEquals("thisismyresettoken", $user->getResetToken());
-        $this->assertEquals($exp, $user->getResetTokenExpire());
+        $this->assertEquals($exp->format('Y-m-d H:i:s'), $user->getResetTokenExpire()->format('Y-m-d H:i:s'));
 
         $user->delete();
     }

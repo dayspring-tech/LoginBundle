@@ -6,7 +6,6 @@ use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -20,7 +19,6 @@ class ForgotResetController extends Controller
 
     /**
      * @Route("/forgot-password", name="forgot_password")
-     * @Template()
      */
     public function forgotPasswordAction(Request $request)
     {
@@ -52,7 +50,7 @@ class ForgotResetController extends Controller
                         ->setTo($user->getEmail())
                         ->setBody(
                             $this->renderView(
-                                'DayspringLoginBundle:Emails:reset_password.html.twig',
+                                '@DayspringLogin/Emails/reset_password.html.twig',
                                 $data
                             ),
                             'text/html'
@@ -78,14 +76,13 @@ class ForgotResetController extends Controller
             }
         }
 
-        return array(
+        return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', array(
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**
      * @Route("/reset-password/{resetToken}", name="reset_password", defaults={"resetToken"=null})
-     * @Template()
      */
     public function resetPasswordAction(Request $request, $resetToken)
     {
@@ -114,9 +111,9 @@ class ForgotResetController extends Controller
                     return $this->redirect($this->generateUrl('_login'));
                 }
             }
-            return array(
+            return $this->render('@DayspringLogin/ForgotReset/resetPassword.html.twig', array(
                 'form' => $form->createView()
-            );
+            ));
         } else {
             throw new AccessDeniedHttpException("No User found with this reset token.");
         }
@@ -124,7 +121,6 @@ class ForgotResetController extends Controller
 
     /**
      * @Route("/account/change-password", name="change_password")
-     * @Template()
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function changePasswordAction(Request $request)
@@ -158,8 +154,8 @@ class ForgotResetController extends Controller
                 return $this->redirect($this->generateUrl("account_dashboard"));
             }
         }
-        return array(
+        return $this->render('@DayspringLogin/ForgotReset/changePassword.html.twig', array(
             'form' => $form->createView()
-        );
+        ));
     }
 }
