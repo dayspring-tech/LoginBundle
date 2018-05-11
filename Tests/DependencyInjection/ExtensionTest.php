@@ -11,8 +11,9 @@ namespace Dayspring\LoginBundle\Tests\DependencyInjection;
 use Dayspring\LoginBundle\DependencyInjection\DayspringLoginExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use PHPUnit\Framework\TestCase;
 
-class ExtensionTest extends \PHPUnit_Framework_TestCase
+class ExtensionTest extends TestCase
 {
 
     public function testLoadEmptyConfiguration()
@@ -26,7 +27,7 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(5, count($container->getParameterBag()->all()), '->load() loads the services.xml file');
 
-        $this->assertEquals(2, count($container->getDefinitions()));
+        $this->assertEquals(3, count($container->getDefinitions()));
     }
 
     private function createContainer()
