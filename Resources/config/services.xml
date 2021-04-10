@@ -1,16 +1,38 @@
 <?xml version="1.0" ?>
 
-<container xmlns="http://symfony.com/schema/dic/services"
+<container
+    xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="dayspring_login.user_provider" class="Dayspring\LoginBundle\Security\User\DayspringUserProvider">
+        <defaults
+            autowire="false"
+            autoconfigure="false"
+            public="true">
+        </defaults>
+
+        <service
+            id="dayspring_login.user_provider"
+            class="Dayspring\LoginBundle\Security\User\DayspringUserProvider"
+            autowire="true"
+            autoconfigure="true">
         </service>
 
-        <service id="dayspring_login.success_handler" class="Dayspring\LoginBundle\Security\AuthenticationSuccessHandler" parent="security.authentication.success_handler">
-
+        <service
+            id="dayspring_login.success_handler"
+            class="Dayspring\LoginBundle\Security\AuthenticationSuccessHandler"
+            parent="security.authentication.success_handler"
+            autowire="true"
+            autoconfigure="false"
+            public="true">
         </service>
 
+        <prototype
+            namespace="Dayspring\LoginBundle\Controller\"
+            resource="../../Controller/*"
+            autowire="true"
+            autoconfigure="true">
+        </prototype>
     </services>
 </container>
