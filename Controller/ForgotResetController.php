@@ -7,6 +7,7 @@ use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
 use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
 use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -70,7 +71,7 @@ class ForgotResetController extends Controller
                     );
                     $fromAddress = $this->getParameter('login_bundle.from_address');
                     $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
-                    $message = \Swift_Message::newInstance()
+                    $message = (new Swift_Message())
                         ->setSubject($subject)
                         ->setFrom(array($fromAddress => $fromDisplayName))
                         ->setTo($user->getEmail())
