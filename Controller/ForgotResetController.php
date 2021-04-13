@@ -5,7 +5,6 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
-use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class ForgotResetController extends Controller
 {
@@ -32,7 +32,7 @@ class ForgotResetController extends Controller
 
     public function __construct(
         AuthenticationManagerInterface $authenticationManager,
-        DayspringUserProvider $userProvider,
+        UserProviderInterface $userProvider,
         SessionInterface $session,
         Swift_Mailer $mailer,
         TokenStorageInterface $tokenStorage,

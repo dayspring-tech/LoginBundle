@@ -3,19 +3,19 @@ namespace Dayspring\LoginBundle\Controller;
 
 use Dayspring\LoginBundle\Form\Type\UserType;
 use Dayspring\LoginBundle\Model\User;
-use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class UserAccountController extends Controller
 {
-    protected $dayspringUserProvider;
+    protected $userProvider;
 
-    public function __construct(DayspringUserProvider $dayspringUserProvider)
+    public function __construct(UserProviderInterface $userProvider)
     {
-        $this->dayspringUserProvider = $dayspringUserProvider;
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -33,7 +33,7 @@ class UserAccountController extends Controller
      */
     public function usersAction()
     {
-        $users = $this->dayspringUserProvider->getUsers();
+        $users = $this->userProvider->getUsers();
 
         return $this->render('@DayspringLogin/UserAccount/list.html.twig', array('users' => $users));
     }
@@ -46,7 +46,7 @@ class UserAccountController extends Controller
     public function editUserAction(Request $request, $userId)
     {
         if ($userId) {
-            $user = $this->dayspringUserProvider->loadUserById($userId);
+            $user = $this->userProvider->loadUserById($userId);
         } else {
             $user = new User();
         }

@@ -22,17 +22,28 @@
         <service
             id="dayspring_login.user_provider"
             class="Dayspring\LoginBundle\Security\User\DayspringUserProvider"
-            autowire="true"
-            autoconfigure="true"
+            public="false"
+        />
+
+        <service
+            id="Symfony\Component\Security\Core\User\UserProviderInterface"
+            alias="dayspring_login.user_provider"
+            public="false"
         />
 
         <service
             id="dayspring_login.success_handler"
             class="Dayspring\LoginBundle\Security\AuthenticationSuccessHandler"
             parent="security.authentication.success_handler"
-            autowire="true"
+            autowire="false"
             autoconfigure="false"
-            public="true"
+            public="false"
+        />
+
+        <service
+            id="Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface"
+            alias="dayspring_login.success_handler"
+            public="false"
         />
     </services>
 </container>
