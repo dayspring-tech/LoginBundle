@@ -9,7 +9,10 @@
 namespace Dayspring\LoginBundle\Tests;
 
 
+use Propel\Bundle\PropelBundle\Command\BuildCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class WebTestCase extends BaseWebTestCase
 {
@@ -40,7 +43,16 @@ class WebTestCase extends BaseWebTestCase
     {
         parent::setUp();
 
-        self::runCommand('propel:build --insert-sql');
+        self::bootKernel();
+
+        $application = new Application(static::$kernel);
+        $application->add(new BuildCommand());
+
+        $command = $application->find('propel:build');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            '--insert-sql'
+        ]);
     }
 
     protected static function getApplication()
@@ -55,12 +67,5 @@ class WebTestCase extends BaseWebTestCase
         }
 
         return self::$application;
-    }
-
-    protected static function runCommand($command)
-    {
-        $command = sprintf('%s --quiet', $command);
-
-        return self::getApplication()->run(new \Symfony\Component\Console\Input\StringInput($command));
     }
 }

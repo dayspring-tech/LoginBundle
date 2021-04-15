@@ -6,7 +6,10 @@ use Dayspring\LoginBundle\Model\RoleUserQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 use Dayspring\LoginBundle\Tests\WebTestCase;
+use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class UserAccountControllerTest extends WebTestCase
 {
@@ -19,7 +22,15 @@ class UserAccountControllerTest extends WebTestCase
     {
         parent::setUp();
 
-        self::runCommand('propel:fixtures:load @DayspringLoginBundle --sql');
+        $application = new Application(static::$kernel);
+        $application->add(new FixturesLoadCommand());
+
+        $command = $application->find('propel:fixtures:load');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'bundle' => '@DayspringLoginBundle',
+            '--sql'
+        ]);
 
         $this->client = self::createClient();
     }

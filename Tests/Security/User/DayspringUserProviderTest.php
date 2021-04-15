@@ -11,6 +11,9 @@ namespace Dayspring\LoginBundle\Tests\Security\User;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
 use Dayspring\LoginBundle\Tests\WebTestCase;
+use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DayspringUserProviderTest extends WebTestCase
@@ -25,7 +28,15 @@ class DayspringUserProviderTest extends WebTestCase
     {
         parent::setUp();
 
-        self::runCommand('propel:fixtures:load @DayspringLoginBundle --sql');
+        $application = new Application(static::$kernel);
+        $application->add(new FixturesLoadCommand());
+
+        $command = $application->find('propel:fixtures:load');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'bundle' => '@DayspringLoginBundle',
+            '--sql'
+        ]);
 
         $this->userProvider = new DayspringUserProvider();
     }
