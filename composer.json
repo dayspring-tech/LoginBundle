@@ -13,24 +13,29 @@
     "authors": [
         {
             "name": "Jeffrey Wong",
-            "email": "jwong@dayspring-tech.com",
-            "homepage": "http://dayspring-tech.com"
+            "email": "jwong@dayspringpartners.com",
+            "homepage": "https://dayspringpartners.com"
         },
         {
             "name": "Matt Crawford",
-            "email": "mcrawford@dayspring-tech.com",
-            "homepage": "http://dayspring-tech.com"
+            "email": "mcrawford@dayspringpartners.com",
+            "homepage": "https://dayspringpartners.com"
+        },
+        {
+            "name": "Stanley Situ",
+            "email": "ssitu@dayspringpartners.com",
+            "homepage": "https://dayspringpartners.com"
         }
     ],
     "require": {
         "php": ">=7.0",
-        "symfony/framework-bundle": "^3.4",
+        "symfony/framework-bundle": "^3.4|^4.0",
         "sensio/framework-extra-bundle": "^5.0.1",
-        "symfony/yaml": "^3.4",
+        "symfony/yaml": "^3.4|^4.0",
         "phing/phing": "^2.16",
-        "propel/propel-bundle": "1.6.x-dev",
-        "symfony/swiftmailer-bundle": "^2.6.4",
-        "symfony/symfony": "^3.4",
+        "propel/propel-bundle": "dev-feature/1.7",
+        "symfony/swiftmailer-bundle": "3.3.*",
+        "symfony/symfony": "^3.4|^4.0",
         "symfony/phpunit-bridge": "^3.4|^4.0"
     },
     "require-dev": {
@@ -43,5 +48,11 @@
         "exclude-from-classmap": [
             "Tests/"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:dayspring-tech/PropelBundle.git"
+        }
+    ]
 }
