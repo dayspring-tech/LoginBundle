@@ -58,6 +58,8 @@ jobs:
         run: |
           mysql -u root -proot -e "create database mydatabase;"
           mysql -u root -proot -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
+          mysql -u root -proot mydatabase < Resources/fixtures/00_clear_database.sql
+          mysql -u root -proot mydatabase < Resources/fixtures/01_users.sql
 
       - name: Run Tests
         run: composer run-script ci-test
