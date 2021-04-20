@@ -47,7 +47,7 @@ jobs:
         working-directory: ./
 
       - name: Install dependencies
-        run: composer install --prefer-source --no-progress
+        run: composer install --prefer-dist --no-progress
         working-directory: ./
 
       - name: Create Database
