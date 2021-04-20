@@ -52,7 +52,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "https://github.com/dayspring-tech/PropelBundle.git"
+            "url":  "git@github.com:dayspring-tech/PropelBundle.git"
         }
     ],
     "scripts": {
