@@ -45,11 +45,19 @@ jobs:
         run: composer install --prefer-dist --no-progress
         working-directory: ./
 
-      - name: Setup MySQL Database
+      - name: Start MySQL and load TZ data
         run: |
           sudo systemctl start mysql
-          mysql -u root -e "create database mydatabase;"
-          mysql -u root -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
+          mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -proot mysql
+
+      - name: Disable MySQL strict mode
+        run: |
+          echo "SET GLOBAL sql_mode = ''" | mysql -u root -proot mysql
+
+      - name: Setup MySQL Database
+        run: |
+          mysql -u root -e "create database mydatabase;" | mysql -u root -proot mysql
+          mysql -u root -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';" | mysql -u root -proot mysql
 
       - name: Run Tests
         run: composer run-script ci-test
