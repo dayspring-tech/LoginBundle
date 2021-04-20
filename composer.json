@@ -54,5 +54,11 @@
             "type": "vcs",
             "url":  "https://github.com/dayspring-tech/PropelBundle"
         }
-    ]
+    ],
+    "scripts": {
+        "ci-test": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/phpunit/phpunit/phpunit -c ./phpunit-jenkins.xml.dist"
+        ]
+    }
 }
