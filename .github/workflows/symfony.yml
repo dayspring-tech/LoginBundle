@@ -45,11 +45,11 @@ jobs:
         run: composer install --prefer-dist --no-progress
         working-directory: ./
 
-      - name: Create Database
-        run: mysql -u root -e "create database mydatabase;"
-
-      - name: Set Database Privileges
-        run: mysql -u root -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
+      - name: Setup MySQL Database
+        run: |
+          sudo systemctl start mysql
+          mysql -u root -e "create database mydatabase;"
+          mysql -u root -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
 
       - name: Run Tests
         run: composer run-script ci-test
