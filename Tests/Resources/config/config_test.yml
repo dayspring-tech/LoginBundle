@@ -1,2 +1,9 @@
 imports:
     - { resource: config.yml }
+
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.root_dir%/../../log/symfony.log"
+            level: debug
