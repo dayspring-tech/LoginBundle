@@ -58,11 +58,6 @@
             "url":  "git@github.com:dayspring-tech/PropelBundle.git"
         }
     ],
-    "config": {
-        "github-oauth": {
-
-        }
-    },
     "scripts": {
         "ci-test": [
             "Composer\\Config::disableProcessTimeout",
