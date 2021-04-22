@@ -5,25 +5,52 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Swift_Mailer;
+use Swift_Message;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class ForgotResetController extends Controller
 {
+    protected $userProvider;
+    protected $authenticationManager;
+    protected $session;
+    protected $tokenStorage;
+    protected $userPasswordEncoder;
+    protected $mailer;
+
+    public function __construct(
+        AuthenticationManagerInterface $authenticationManager,
+        UserProviderInterface $userProvider,
+        SessionInterface $session,
+        Swift_Mailer $mailer,
+        TokenStorageInterface $tokenStorage,
+        UserPasswordEncoderInterface $userPasswordEncoder
+    ) {
+        $this->authenticationManager = $authenticationManager;
+        $this->mailer = $mailer;
+        $this->session = $session;
+        $this->tokenStorage = $tokenStorage;
+        $this->userPasswordEncoder = $userPasswordEncoder;
+        $this->userProvider = $userProvider;
+    }
 
     /**
      * @Route("/forgot-password", name="forgot_password")
      */
     public function forgotPasswordAction(Request $request)
     {
-        $userProvider = $this->get('dayspring_login.user_provider');
-
         $form = $this->createFormBuilder(array())
             ->add('email', EmailType::class)
             ->getForm();
@@ -33,7 +60,7 @@ class ForgotResetController extends Controller
             $email = $data['email'];
 
             try {
-                $user = $userProvider->loadUserByUsername($email);
+                $user = $this->userProvider->loadUserByUsername($email);
 
                 if ($user->getIsActive()) {
                     $user->generateResetToken();
@@ -44,7 +71,7 @@ class ForgotResetController extends Controller
                     );
                     $fromAddress = $this->getParameter('login_bundle.from_address');
                     $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
-                    $message = \Swift_Message::newInstance()
+                    $message = (new Swift_Message())
                         ->setSubject($subject)
                         ->setFrom(array($fromAddress => $fromDisplayName))
                         ->setTo($user->getEmail())
@@ -55,7 +82,7 @@ class ForgotResetController extends Controller
                             ),
                             'text/html'
                         );
-                    $this->get('mailer')->send($message);
+                    $this->mailer->send($message);
 
                     $request->getSession()->getFlashBag()->add(
                         "success",
@@ -86,10 +113,7 @@ class ForgotResetController extends Controller
      */
     public function resetPasswordAction(Request $request, $resetToken)
     {
-        $userProvider = $this->get('dayspring_login.user_provider');
-        $encoder = $this->get('security.password_encoder');
-
-        $user = $userProvider->loadUserByResetToken($resetToken);
+        $user = $this->userProvider->loadUserByResetToken($resetToken);
         if ($user) {
             $form = $this->createForm(ResetPasswordType::class, $user);
             if ($request->getMethod() == 'POST') {
@@ -97,7 +121,7 @@ class ForgotResetController extends Controller
                 if ($form->isValid()) {
                     $data = $form->getData();
 
-                    $encoded = $encoder->encodePassword($user, $data->getPassword());
+                    $encoded = $this->userPasswordEncoder->encodePassword($user, $data->getPassword());
                     $user->setPassword($encoded);
                     $user->save();
 
@@ -125,10 +149,6 @@ class ForgotResetController extends Controller
      */
     public function changePasswordAction(Request $request)
     {
-        $session = $this->get('session');
-        $authenticationManager = $this->get('security.authentication.manager');
-        $encoder = $this->get('security.password_encoder');
-
         $currentUser = $this->getUser();
         $form = $this->createForm(ChangePasswordType::class, new ChangePasswordEntity());
         if ($request->getMethod() == 'POST') {
@@ -136,7 +156,7 @@ class ForgotResetController extends Controller
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $encoded = $encoder->encodePassword($currentUser, $data->getNewPassword());
+                $encoded = $this->userPasswordEncoder->encodePassword($currentUser, $data->getNewPassword());
                 $currentUser->setPassword($encoded);
                 $currentUser->save();
 
@@ -146,10 +166,10 @@ class ForgotResetController extends Controller
                     "secured_area",
                     $currentUser->getRoles()
                 );
-                $token = $authenticationManager->authenticate($token);
-                $this->get("security.token_storage")->setToken($token);
+                $token = $this->authenticationManager->authenticate($token);
+                $this->tokenStorage->setToken($token);
 
-                $session->getFlashBag()->add('success', 'New password has been saved.');
+                $this->session->getFlashBag()->add('success', 'New password has been saved.');
 
                 return $this->redirect($this->generateUrl("account_dashboard"));
             }

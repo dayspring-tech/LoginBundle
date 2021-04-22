@@ -13,11 +13,10 @@ class TestKernel extends Kernel
     }
     public function registerBundles()
     {
-        return array(
+        $bundles = array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-//            new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
 //            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
@@ -29,6 +28,12 @@ class TestKernel extends Kernel
 //            new JMS\AopBundle\JMSAopBundle(),
 //            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
         );
+
+        if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
+            $bundles[] = new \Symfony\Bundle\MonologBundle\MonologBundle();
+        }
+
+        return $bundles;
     }
     public function registerContainerConfiguration(LoaderInterface $loader)
     {

@@ -8,6 +8,7 @@
 
 namespace Dayspring\LoginBundle\Tests\Controller;
 
+use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 use Dayspring\LoginBundle\Tests\WebTestCase;
@@ -188,11 +189,17 @@ class ForgotResetControllerTest extends WebTestCase
     {
         $encoder = static::$kernel->getContainer()->get('security.password_encoder');
 
+        $securityRole = new SecurityRole();
+        $securityRole->setRoleName('ROLE');
+
         $user = new User();
-        $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
-        $user->setPassword($encoded);
-        $user->save();
+
+        $user
+            ->addSecurityRole($securityRole)
+            ->setEmail(sprintf("test+%s@test.com", microtime()))
+            ->setPassword($encoded)
+            ->save();
 
         $crawler = $this->client->request("GET", "/login");
 
@@ -230,11 +237,17 @@ class ForgotResetControllerTest extends WebTestCase
     {
         $encoder = static::$kernel->getContainer()->get('security.password_encoder');
 
+        $securityRole = new SecurityRole();
+        $securityRole->setRoleName('ROLE');
+
         $user = new User();
-        $user->setEmail(sprintf("test+%s@test.com", microtime()));
         $encoded = $encoder->encodePassword($user, 'password');
-        $user->setPassword($encoded);
-        $user->save();
+
+        $user
+            ->addSecurityRole($securityRole)
+            ->setEmail(sprintf("test+%s@test.com", microtime()))
+            ->setPassword($encoded)
+            ->save();
 
         $crawler = $this->client->request("GET", "/login");
 
@@ -264,6 +277,4 @@ class ForgotResetControllerTest extends WebTestCase
         $user->reload();
         $this->assertEquals($encoded, $user->getPassword());
     }
-
-
 }

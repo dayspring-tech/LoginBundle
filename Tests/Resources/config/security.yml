@@ -35,3 +35,7 @@ security:
                 path:   _logout
                 target: /
             anonymous: ~
+
+        main:
+            anonymous: ~
+            logout_on_user_change: true
