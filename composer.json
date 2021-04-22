@@ -29,15 +29,17 @@
     ],
     "require": {
         "php": ">=7.0",
-        "symfony/framework-bundle": "^3.4|^4.0",
+        "symfony/framework-bundle": "^3.4.31|^4.0",
         "sensio/framework-extra-bundle": "^5.0.1",
-        "symfony/yaml": "^3.4|^4.0",
+        "symfony/yaml": "^3.4.31|^4.0",
         "phing/phing": "^2.16",
         "propel/propel-bundle": "1.7.x-dev",
         "symfony/swiftmailer-bundle": "3.3.*",
-        "symfony/symfony": "^3.4|^4.0",
-        "symfony/phpunit-bridge": "^3.4|^4.0",
-        "symfony/monolog-bundle": "^3.6.0"
+        "symfony/symfony": "^3.4.31|^4.0",
+        "symfony/phpunit-bridge": "^3.4.31|^4.0",
+        "symfony/monolog-bundle": "^3.6.0",
+        "doctrine/annotations": "^1.12.1",
+        "egulias/email-validator": "^2.1.25"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"
@@ -58,7 +60,7 @@
     ],
     "config": {
         "github-oauth": {
-            "github.com": "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"
+
         }
     },
     "scripts": {

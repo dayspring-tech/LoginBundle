@@ -51,7 +51,7 @@ class WebTestCase extends BaseWebTestCase
         $command = $application->find('propel:build');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--insert-sql'
+            '--insert-sql' => null
         ]);
     }
 

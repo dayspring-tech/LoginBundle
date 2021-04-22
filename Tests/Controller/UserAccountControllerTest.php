@@ -29,7 +29,7 @@ class UserAccountControllerTest extends WebTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'bundle' => '@DayspringLoginBundle',
-            '--sql'
+            '--sql' => null
         ]);
 
         $this->client = self::createClient();

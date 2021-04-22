@@ -35,7 +35,7 @@ class DayspringUserProviderTest extends WebTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'bundle' => '@DayspringLoginBundle',
-            '--sql'
+            '--sql' => null
         ]);
 
         $this->userProvider = new DayspringUserProvider();
