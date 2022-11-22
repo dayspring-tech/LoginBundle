@@ -39,7 +39,7 @@ class WebTestCase extends BaseWebTestCase
         return $service;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
