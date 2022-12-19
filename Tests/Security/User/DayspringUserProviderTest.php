@@ -31,7 +31,7 @@ class DayspringUserProviderTest extends WebTestCase
         parent::setUp();
 
         $application = new Application(static::$kernel);
-        $application->add(new FixturesLoadCommand());
+        $application->add(new FixturesLoadCommand(static::$kernel->getContainer()));
 
         $command = $application->find('propel:fixtures:load');
         $commandTester = new CommandTester($command);

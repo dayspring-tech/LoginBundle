@@ -46,7 +46,8 @@ class WebTestCase extends BaseWebTestCase
         self::bootKernel();
 
         $application = new Application(static::$kernel);
-        $application->add(new BuildCommand());
+
+        $application->add(new BuildCommand(static::$kernel->getContainer()));
 
         $command = $application->find('propel:build');
         $commandTester = new CommandTester($command);
