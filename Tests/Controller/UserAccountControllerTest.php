@@ -90,7 +90,7 @@ class UserAccountControllerTest extends WebTestCase
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-        $this->assertCount(1, $crawler->filter("div.alert-danger:contains('User account is disabled')"));
+        $this->assertCount(1, $crawler->filter("div.alert-danger:contains('Bad credentials')"));
 
         $user->delete();
     }
