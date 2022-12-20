@@ -33,7 +33,7 @@
         "sensio/framework-extra-bundle": "^5.0.1",
         "symfony/yaml": "^3.4.31|^4.0",
         "phing/phing": "^2.16",
-        "propel/propel-bundle": "1.7.x-dev",
+        "dayspring-tech/propel-bundle": "^1.7.0",
         "symfony/swiftmailer-bundle": "3.3.*",
         "symfony/symfony": "^3.4.31|^4.0",
         "symfony/phpunit-bridge": "^3.4.31|^4.0",
@@ -52,12 +52,6 @@
             "Tests/"
         ]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "git@github.com:dayspring-tech/PropelBundle.git"
-        }
-    ],
     "scripts": {
         "ci-test": [
             "Composer\\Config::disableProcessTimeout",
