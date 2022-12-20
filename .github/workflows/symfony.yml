@@ -6,15 +6,22 @@ on:
 jobs:
   test:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.2', '7.3', '7.4' ]
-        composer: [ '', '--prefer-lowest' ]
+        php:
+#          - '7.2'
+#          - '7.3'
+          - '7.4'
+          - '8.0'
+          - '8.1'
+        composer:
+          - ''
+          - '--prefer-lowest'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use PHP
         uses: shivammathur/setup-php@v2
@@ -32,7 +39,7 @@ jobs:
 
       - name: cache dependencies
         id: angular-dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.composer }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -61,7 +68,8 @@ jobs:
       - name: Setup MySQL Database
         run: |
           mysql -u root -proot -e "create database mydatabase;"
-          mysql -u root -proot -e "grant all privileges on mydatabase.* to 'devuser' identified by 'devpass';"
+          mysql -u root -proot -e "CREATE USER 'devuser' identified WITH mysql_native_password by 'devpass';"
+          mysql -u root -proot -e "grant all privileges on mydatabase.* to 'devuser';"
           mysql -u root -proot mydatabase < Resources/fixtures/00_clear_database.sql
           mysql -u root -proot mydatabase < Resources/fixtures/01_users.sql
 

@@ -39,14 +39,15 @@ class WebTestCase extends BaseWebTestCase
         return $service;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         self::bootKernel();
 
         $application = new Application(static::$kernel);
-        $application->add(new BuildCommand());
+
+        $application->add(new BuildCommand(static::$kernel->getContainer()));
 
         $command = $application->find('propel:build');
         $commandTester = new CommandTester($command);

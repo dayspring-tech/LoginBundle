@@ -18,12 +18,12 @@ class UserAccountControllerTest extends WebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $application = new Application(static::$kernel);
-        $application->add(new FixturesLoadCommand());
+        $application->add(new FixturesLoadCommand(static::$kernel->getContainer()));
 
         $command = $application->find('propel:fixtures:load');
         $commandTester = new CommandTester($command);
@@ -193,7 +193,7 @@ class UserAccountControllerTest extends WebTestCase
         $form['user[email]'] = 'not-email';
         $crawler = $this->client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'This value is not a valid email address',
             $crawler->html()
         );

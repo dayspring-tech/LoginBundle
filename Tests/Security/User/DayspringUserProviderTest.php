@@ -14,6 +14,8 @@ use Dayspring\LoginBundle\Tests\WebTestCase;
 use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DayspringUserProviderTest extends WebTestCase
@@ -24,12 +26,12 @@ class DayspringUserProviderTest extends WebTestCase
      */
     protected $userProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $application = new Application(static::$kernel);
-        $application->add(new FixturesLoadCommand());
+        $application->add(new FixturesLoadCommand(static::$kernel->getContainer()));
 
         $command = $application->find('propel:fixtures:load');
         $commandTester = new CommandTester($command);
@@ -66,19 +68,15 @@ class DayspringUserProviderTest extends WebTestCase
         $this->assertTrue($this->userProvider->supportsClass(get_class($user)));
     }
 
-    /**
-     * @expectedException Symfony\Component\Security\Core\Exception\UsernameNotFoundException
-     */
     public function testLoadUserByUsernameFailure()
     {
+        $this->expectException(UsernameNotFoundException::class);
         $this->userProvider->loadUserByUsername('foobar@doesnotexist.com');
     }
 
-    /**
-     * @expectedException Symfony\Component\Security\Core\Exception\UnsupportedUserException
-     */
     public function testRefreshUserFailure()
     {
+        $this->expectException(UnsupportedUserException::class);
         $user = new SomeUser();
 
         $this->userProvider->refreshUser($user);
