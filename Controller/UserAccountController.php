@@ -3,13 +3,13 @@ namespace Dayspring\LoginBundle\Controller;
 
 use Dayspring\LoginBundle\Form\Type\UserType;
 use Dayspring\LoginBundle\Model\User;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class UserAccountController extends Controller
+class UserAccountController extends AbstractController
 {
     protected $userProvider;
 
