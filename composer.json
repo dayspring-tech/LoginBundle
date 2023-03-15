@@ -29,7 +29,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "symfony/framework-bundle": "^3.4.48|^4.4.23",
+        "symfony/framework-bundle": "^3.4.48|^4.4.23|^5.0",
         "sensio/framework-extra-bundle": "^5.0.1",
         "symfony/yaml": "^3.4.31|^4.0",
         "phing/phing": "^2.16",
