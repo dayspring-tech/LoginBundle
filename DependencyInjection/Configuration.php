@@ -19,8 +19,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('dayspring_login');
+        $treeBuilder = new TreeBuilder('dayspring_login');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

@@ -20,6 +20,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class ForgotResetController extends AbstractController
 {
@@ -34,7 +37,7 @@ class ForgotResetController extends AbstractController
         AuthenticationManagerInterface $authenticationManager,
         UserProviderInterface $userProvider,
         SessionInterface $session,
-        Swift_Mailer $mailer,
+        MailerInterface $mailer,
         TokenStorageInterface $tokenStorage,
         UserPasswordEncoderInterface $userPasswordEncoder
     ) {
@@ -71,17 +74,19 @@ class ForgotResetController extends AbstractController
                     );
                     $fromAddress = $this->getParameter('login_bundle.from_address');
                     $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
-                    $message = (new Swift_Message())
-                        ->setSubject($subject)
-                        ->setFrom(array($fromAddress => $fromDisplayName))
-                        ->setTo($user->getEmail())
-                        ->setBody(
-                            $this->renderView(
-                                '@DayspringLogin/Emails/reset_password.html.twig',
-                                $data
-                            ),
-                            'text/html'
-                        );
+
+                    $message = (new Email())
+                        ->subject($subject)
+                        ->to($user->getEmail())
+                        ->html($this->renderView(
+                            '@DayspringLogin/Emails/reset_password.html.twig',
+                            $data
+                        ));
+
+                    foreach($fromAddress as $from) {
+                        $message ->from($from);
+                    }
+
                     $this->mailer->send($message);
 
                     $request->getSession()->getFlashBag()->add(
