@@ -5,8 +5,6 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
