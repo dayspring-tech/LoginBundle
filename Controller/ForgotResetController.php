@@ -81,8 +81,12 @@ class ForgotResetController extends AbstractController
                             $data
                         ));
 
-                    foreach($fromAddress as $from) {
-                        $message ->from($from);
+                    if (is_array($fromAddress)) {
+                        foreach($fromAddress as $from) {
+                            $message ->from($from);
+                        }
+                    } else {
+                        $message->from($fromAddress);
                     }
 
                     $this->mailer->send($message);
