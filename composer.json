@@ -35,7 +35,9 @@
         "symfony/monolog-bundle": "^3.6.0",
         "symfony/password-hasher": "^5.4",
         "symfony/security-bundle": "^5.4",
-        "symfony/mailer": "^5.4"
+        "symfony/mailer": "^5.4",
+        "symfony/twig-bundle": "^5.4",
+        "twig/twig": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0|^6.0",
