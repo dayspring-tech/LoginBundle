@@ -30,5 +30,3 @@ propel:
     build_properties:
         propel.php.dir: "/"
 
-swiftmailer:
-    disable_delivery: true
