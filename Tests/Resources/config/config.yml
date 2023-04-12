@@ -25,8 +25,8 @@ propel:
         user:     devuser
         password: devpass
         dsn:      mysql:host=localhost;dbname=mydatabase;charset=UTF8
-    path:       "%kernel.project_dir%/../../vendor/dayspring-tech/propel1"
-    phing_path: "%kernel.project_dir%/../../vendor/phing"
+    path:       "%kernel.project_dir%/vendor/dayspring-tech/propel1"
+    phing_path: "%kernel.project_dir%/vendor/phing"
     build_properties:
         propel.php.dir: "/"
 
