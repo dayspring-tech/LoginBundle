@@ -38,4 +38,4 @@ security:
 
         main:
             anonymous: ~
-            logout_on_user_change: true
+            #logout_on_user_change: true
