@@ -32,6 +32,8 @@ class UserAccountControllerTest extends WebTestCase
             '--sql' => null
         ]);
 
+        self::ensureKernelShutdown();
+
         $this->client = self::createClient();
     }
 
