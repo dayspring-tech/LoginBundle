@@ -4,7 +4,7 @@ imports:
 framework:
     test: ~
     secret: xxxxxxxxxx
-    router:        { resource: "%kernel.project_dir%/config/routing.yml" }
+    router:        { resource: "%kernel.project_dir%/Tests/Resources/config/routing.yml" }
     form:            ~
     csrf_protection: ~
     validation:      { enable_annotations: true }
@@ -18,13 +18,14 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    path:             "%kernel.project_dir%/Tests/Resources/Resources/views/"
 
 propel:
     dbal:
         driver:   mysql
         user:     devuser
         password: devpass
-        dsn:      mysql:host=localhost;dbname=mydatabase;charset=UTF8
+        dsn:      mysql:host=test_mysql;dbname=mydatabase;charset=UTF8
     path:       "%kernel.project_dir%/vendor/dayspring-tech/propel1"
     phing_path: "%kernel.project_dir%/vendor/phing"
     build_properties:

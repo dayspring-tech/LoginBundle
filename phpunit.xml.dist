@@ -7,12 +7,12 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="false"
          bootstrap="Tests/autoload.php">
 
     <php>
         <ini name="error_reporting" value="-1"/>
         <server name="KERNEL_DIR" value="./Tests/" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
 
     <testsuites>
