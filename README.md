@@ -1,5 +1,5 @@
 # Dayspring Login Bundle
-[![Build Status](https://travis-ci.org/dayspring-tech/LoginBundle.svg?branch=master)](https://travis-ci.org/dayspring-tech/LoginBundle)
+[![Build Status](https://github.com/dayspring-tech/LoginBundle/actions/workflows/symfony.yml/badge.svg)](https://github.com/dayspring-tech/LoginBundle/actions/workflows/symfony.yml)
 
 This bundle provides basic username/password authentication, forgot/reset password, and change password.
 
@@ -9,7 +9,7 @@ security:
     providers:
         dayspring:
             id: dayspring_login.user_provider
-    encoders:
+    password_hashers:
         Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
             cost: 12
@@ -22,6 +22,7 @@ security:
             security: false
         secured_area:
             pattern:    ^/
+            user_checker: dayspring_login.user_checker
             form_login:
                 check_path: _login_check
                 login_path: _login
