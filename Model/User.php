@@ -18,21 +18,6 @@ class User extends BaseUser implements UserInterface
         $this->setCreatedDate(new DateTime());
     }
 
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
-    }
-
     public function isEnabled()
     {
         return $this->getIsActive();

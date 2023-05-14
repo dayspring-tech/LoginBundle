@@ -25,10 +25,11 @@ security:
 
         secured_area:
             pattern:    ^/
+            user_checker: dayspring_login.user_checker
             form_login:
                 check_path: _login_check
                 login_path: _login
-                default_target_path: /_demo/secure
+                default_target_path: /account
                 provider: dayspring
                 success_handler: dayspring_login.success_handler
             logout:

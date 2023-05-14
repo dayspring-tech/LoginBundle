@@ -14,6 +14,8 @@ framework:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
+    mailer:
+        dsn: "null://null"
 
 twig:
     debug:            "%kernel.debug%"
