@@ -27,7 +27,7 @@ propel:
         driver:   mysql
         user:     devuser
         password: devpass
-        dsn:      mysql:host=test_mysql;dbname=mydatabase;charset=UTF8
+        dsn:      "mysql:host=%env(resolve:MYSQL_HOST)%;dbname=mydatabase;charset=UTF8"
     path:       "%kernel.project_dir%/vendor/dayspring-tech/propel1"
     phing_path: "%kernel.project_dir%/vendor/phing"
     build_properties:
