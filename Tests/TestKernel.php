@@ -3,6 +3,7 @@ namespace Dayspring\LoginBundle\Tests;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 
 class TestKernel extends Kernel
@@ -17,16 +18,9 @@ class TestKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-//            new \Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
-//            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-//            new \Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new \Propel\Bundle\PropelBundle\PropelBundle(),
-//            new \Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new \Dayspring\LoginBundle\DayspringLoginBundle(),
-
-//            new JMS\AopBundle\JMSAopBundle(),
-//            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

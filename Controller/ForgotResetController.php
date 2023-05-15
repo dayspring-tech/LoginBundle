@@ -8,7 +8,7 @@ use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -37,7 +37,7 @@ class ForgotResetController extends AbstractController
         SessionInterface $session,
         MailerInterface $mailer,
         TokenStorageInterface $tokenStorage,
-        UserPasswordHasherInterface $userPasswordEncoder
+        UserPasswordEncoderInterface $userPasswordEncoder
     ) {
         $this->authenticationManager = $authenticationManager;
         $this->mailer = $mailer;
@@ -128,8 +128,8 @@ class ForgotResetController extends AbstractController
                 if ($form->isValid()) {
                     $data = $form->getData();
 
-                    //$encoded = $this->userPasswordEncoder->encodePassword($user, $data->getPassword());
-                    $encoded = $this->userPasswordEncoder->hashPassword($user, $data->getPassword());
+                    $encoded = $this->userPasswordEncoder->encodePassword($user, $data->getPassword());
+//                    $encoded = $this->userPasswordEncoder->hashPassword($user, $data->getPassword());
                     $user->setPassword($encoded);
                     $user->save();
 
@@ -164,8 +164,8 @@ class ForgotResetController extends AbstractController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                //$encoded = $this->userPasswordEncoder->encodePassword($currentUser, $data->getNewPassword());
-                $encoded = $this->userPasswordEncoder->hashPassword($currentUser, $data->getNewPassword());
+                $encoded = $this->userPasswordEncoder->encodePassword($currentUser, $data->getNewPassword());
+//                $encoded = $this->userPasswordEncoder->hashPassword($currentUser, $data->getNewPassword());
                 $currentUser->setPassword($encoded);
                 $currentUser->save();
 
