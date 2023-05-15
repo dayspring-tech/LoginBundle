@@ -2,15 +2,12 @@ version: '3.7'
 
 services:
     dev_mysql:
-        build:
-            context: ./mysql
-        image: '${COMPOSE_PROJECT_NAME}/${REPOSITORY_NAME}_mysql:${IMAGE_TAG}'
-        container_name: '${REPOSITORY_NAME}_mysql'
-        hostname: '${REPOSITORY_NAME}-mysql'
-        restart: always
+        image: mysql:5.7
+        platform: linux/amd64
         volumes:
             - mysql-data:/var/lib/mysql
             - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+        restart: always
         environment:
             MYSQL_HOST: '${MYSQL_HOST}'
             MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
@@ -23,6 +20,8 @@ services:
     symfony:
         build:
             context: ./symfony
+            args:
+                PHP_VERSION: 8.1
         image: '${COMPOSE_PROJECT_NAME}/${REPOSITORY_NAME}_symfony:${IMAGE_TAG}'
         container_name: '${REPOSITORY_NAME}_symfony'
         hostname: '${REPOSITORY_NAME}-symfony'

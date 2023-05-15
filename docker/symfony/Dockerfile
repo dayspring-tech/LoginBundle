@@ -1,4 +1,5 @@
-FROM php:8.1-fpm-alpine
+ARG PHP_VERSION=latest
+FROM php:${PHP_VERSION}-fpm-alpine
 
 RUN set -eux; \
   apk add --no-cache --virtual .composer-rundeps \
