@@ -16,6 +16,7 @@ framework:
         collect: false
     mailer:
         dsn: "null://null"
+    annotations: true
 
 twig:
     debug:            "%kernel.debug%"
