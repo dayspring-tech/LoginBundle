@@ -8,7 +8,7 @@ security:
             id: dayspring_login.user_provider
 
     # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
-    password_hashers:
+    encoders:
         Dayspring\LoginBundle\Model\User:
             algorithm: bcrypt
             cost: 12
@@ -25,10 +25,11 @@ security:
 
         secured_area:
             pattern:    ^/
+            user_checker: dayspring_login.user_checker
             form_login:
                 check_path: _login_check
                 login_path: _login
-                default_target_path: /_demo/secure
+                default_target_path: /account
                 provider: dayspring
                 success_handler: dayspring_login.success_handler
             logout:
@@ -38,4 +39,4 @@ security:
 
         main:
             anonymous: ~
-            logout_on_user_change: true
+            #logout_on_user_change: true

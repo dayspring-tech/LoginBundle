@@ -18,21 +18,6 @@ class User extends BaseUser implements UserInterface
         $this->setCreatedDate(new DateTime());
     }
 
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
-    }
-
     public function isEnabled()
     {
         return $this->getIsActive();
@@ -89,7 +74,8 @@ class User extends BaseUser implements UserInterface
     {
         $hours = 0;
         if ($this->getResetTokenExpire() !== null) {
-            $diff = $this->getResetTokenExpire()->diff(new DateTime());
+            $resetTokenExp = new DateTime($this->getResetTokenExpire());
+            $diff = $resetTokenExp->diff(new DateTime());
             $hours = $diff->h;
             $hours = $hours + ($diff->days * 24);
         }

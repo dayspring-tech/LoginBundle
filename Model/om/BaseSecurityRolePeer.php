@@ -13,6 +13,13 @@ use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\SecurityRolePeer;
 use Dayspring\LoginBundle\Model\map\SecurityRoleTableMap;
 
+/**
+ * Base static class for performing query and update operations on the 'roles' table.
+ *
+ *
+ *
+ * @package propel.generator.LoginBundle.om
+ */
 abstract class BaseSecurityRolePeer
 {
 

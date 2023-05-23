@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+    symfony:
+        volumes:
+            - ..:/usr/src/symfony
+    dev_mysql:
+        volumes:
+            - ./mysql/data:/var/lib/mysql

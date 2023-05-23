@@ -26,6 +26,8 @@ class ForgotResetControllerTest extends WebTestCase
     {
         parent::setUp();
 
+        self::ensureKernelShutdown();
+
         $this->client = self::createClient();
     }
 

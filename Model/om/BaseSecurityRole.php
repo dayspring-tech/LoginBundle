@@ -21,6 +21,13 @@ use Dayspring\LoginBundle\Model\SecurityRoleQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 
+/**
+ * Base class that represents a row from the 'roles' table.
+ *
+ *
+ *
+ * @package    propel.generator.LoginBundle.om
+ */
 abstract class BaseSecurityRole extends BaseObject implements Persistent
 {
     /**
