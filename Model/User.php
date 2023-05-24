@@ -74,7 +74,7 @@ class User extends BaseUser implements UserInterface
     {
         $hours = 0;
         if ($this->getResetTokenExpire() !== null) {
-            $resetTokenExp = new DateTime($this->getResetTokenExpire());
+            $resetTokenExp = new DateTime($this->getResetTokenExpire('Y-m-d H:i:s'));
             $diff = $resetTokenExp->diff(new DateTime());
             $hours = $diff->h;
             $hours = $hours + ($diff->days * 24);
