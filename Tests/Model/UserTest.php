@@ -8,7 +8,6 @@
 
 namespace Dayspring\LoginBundle\Tests\Model;
 
-use DateTime;
 use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Tests\WebTestCase;
@@ -84,8 +83,7 @@ class UserTest extends WebTestCase
 
         $this->assertEquals("thisismyresettoken", $token);
         $this->assertEquals("thisismyresettoken", $user->getResetToken());
-        $tempdt = new DateTime($user->getResetTokenExpire('Y-m-d H:i:s'));
-        $this->assertEquals($exp->format('Y-m-d H:i:s'), $tempdt->format('Y-m-d H:i:s'));
+        $this->assertEquals($exp->format('Y-m-d H:i:s'), $user->getResetTokenExpire()->format('Y-m-d H:i:s'));
 
         $user->delete();
     }
