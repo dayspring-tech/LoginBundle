@@ -44,16 +44,6 @@ class WebTestCase extends BaseWebTestCase
         parent::setUp();
 
         self::bootKernel();
-
-        $application = new Application(static::$kernel);
-
-        $application->add(new BuildCommand(static::$kernel->getContainer()));
-
-        $command = $application->find('propel:build');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            '--insert-sql' => null
-        ]);
     }
 
     protected static function getApplication()
