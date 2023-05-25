@@ -49,3 +49,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 build
+
+.phpunit.result.cache
+
+Model/om
+Model/map
