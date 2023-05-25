@@ -19,10 +19,6 @@ use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\User;
 
 /**
- * Base class that represents a query for the 'roles_users' table.
- *
- *
- *
  * @method RoleUserQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method RoleUserQuery orderByRoleId($order = Criteria::ASC) Order by the role_id column
  *
@@ -49,8 +45,6 @@ use Dayspring\LoginBundle\Model\User;
  *
  * @method array findByUserId(int $user_id) Return RoleUser objects filtered by the user_id column
  * @method array findByRoleId(int $role_id) Return RoleUser objects filtered by the role_id column
- *
- * @package    propel.generator.LoginBundle.om
  */
 abstract class BaseRoleUserQuery extends ModelCriteria
 {

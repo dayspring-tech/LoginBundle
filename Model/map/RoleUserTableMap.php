@@ -16,7 +16,7 @@ use \TableMap;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package    propel.generator.LoginBundle.map
+ * @package    propel.generator..map
  */
 class RoleUserTableMap extends TableMap
 {
@@ -24,7 +24,7 @@ class RoleUserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'LoginBundle.map.RoleUserTableMap';
+    const CLASS_NAME = '.map.RoleUserTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -39,7 +39,7 @@ class RoleUserTableMap extends TableMap
         $this->setName('roles_users');
         $this->setPhpName('RoleUser');
         $this->setClassname('Dayspring\\LoginBundle\\Model\\RoleUser');
-        $this->setPackage('LoginBundle');
+        $this->setPackage('');
         $this->setUseIdGenerator(false);
         $this->setIsCrossRef(true);
         // columns

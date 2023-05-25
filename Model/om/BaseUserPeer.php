@@ -13,13 +13,6 @@ use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserPeer;
 use Dayspring\LoginBundle\Model\map\UserTableMap;
 
-/**
- * Base static class for performing query and update operations on the 'users' table.
- *
- *
- *
- * @package propel.generator.LoginBundle.om
- */
 abstract class BaseUserPeer
 {
 

@@ -19,10 +19,6 @@ use Dayspring\LoginBundle\Model\UserPeer;
 use Dayspring\LoginBundle\Model\UserQuery;
 
 /**
- * Base class that represents a query for the 'users' table.
- *
- *
- *
  * @method UserQuery orderById($order = Criteria::ASC) Order by the id column
  * @method UserQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method UserQuery orderByPassword($order = Criteria::ASC) Order by the password column
@@ -72,8 +68,6 @@ use Dayspring\LoginBundle\Model\UserQuery;
  * @method array findByCreatedDate(string $created_date) Return User objects filtered by the created_date column
  * @method array findByLastLoginDate(string $last_login_date) Return User objects filtered by the last_login_date column
  * @method array findByIsActive(boolean $is_active) Return User objects filtered by the is_active column
- *
- * @package    propel.generator.LoginBundle.om
  */
 abstract class BaseUserQuery extends ModelCriteria
 {

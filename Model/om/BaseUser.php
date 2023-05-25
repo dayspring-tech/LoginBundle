@@ -23,13 +23,6 @@ use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserPeer;
 use Dayspring\LoginBundle\Model\UserQuery;
 
-/**
- * Base class that represents a row from the 'users' table.
- *
- *
- *
- * @package    propel.generator.LoginBundle.om
- */
 abstract class BaseUser extends BaseObject implements Persistent
 {
     /**
@@ -234,7 +227,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getResetTokenExpire($format = 'Y-m-d H:i:s')
+    public function getResetTokenExpire($format = null)
     {
         if ($this->reset_token_expire === null) {
             return null;
@@ -274,7 +267,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedDate($format = 'Y-m-d H:i:s')
+    public function getCreatedDate($format = null)
     {
         if ($this->created_date === null) {
             return null;
@@ -314,7 +307,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getLastLoginDate($format = 'Y-m-d H:i:s')
+    public function getLastLoginDate($format = null)
     {
         if ($this->last_login_date === null) {
             return null;

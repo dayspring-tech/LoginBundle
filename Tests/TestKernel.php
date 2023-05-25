@@ -8,10 +8,21 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class TestKernel extends Kernel
 {
-    public function getRootDir()
+    public function getProjectDir()
     {
-        return __DIR__.'/Resources';
+        return __DIR__;
     }
+
+    public function getCacheDir()
+    {
+        return __DIR__.'/../var/cache';
+    }
+
+    public function getLogDir()
+    {
+        return __DIR__.'/../var/log';
+    }
+
     public function registerBundles()
     {
         $bundles = array(
