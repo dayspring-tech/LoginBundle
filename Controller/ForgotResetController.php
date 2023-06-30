@@ -51,7 +51,7 @@ class ForgotResetController extends Controller
      */
     public function forgotPasswordAction(Request $request)
     {
-        $genericMsg = 'Your request has been sent.';
+        $genericMsg = 'Your request has been sent. If an account was found, an email has been sent. Please check your email for further instructions.';
 
         $form = $this->createFormBuilder(array())
             ->add('email', EmailType::class)
