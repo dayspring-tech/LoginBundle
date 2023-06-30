@@ -77,6 +77,7 @@ class ForgotResetControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
         $this->assertCount(1, $crawler->filter("div.alert-danger:contains('Your request has been sent')"));
 
         $user->delete();
@@ -95,6 +96,8 @@ class ForgotResetControllerTest extends WebTestCase
         $form['form[email]'] = 'foobar@doesnotexist.com';
         $crawler = $this->client->submit($form);
 
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
         $this->assertGreaterThan(
             0,
             $crawler->filter('html:contains("Your request has been sent")')->count()
