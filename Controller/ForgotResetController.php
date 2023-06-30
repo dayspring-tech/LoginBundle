@@ -88,6 +88,11 @@ class ForgotResetController extends Controller
                 }
             } catch (UsernameNotFoundException $e) {
                 // do not throw an error for UsernameNotFoundException
+                $request->getSession()->getFlashBag()->add(
+                    "success",
+                    $genericMsg
+                );
+                return $this->redirect($this->generateUrl('_login'));
             }
 
             $request->getSession()->getFlashBag()->add(

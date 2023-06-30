@@ -76,7 +76,7 @@ class ForgotResetControllerTest extends WebTestCase
         $form['form[email]'] = $user->getEmail();
         $crawler = $this->client->submit($form);
 
-        $this->assertFalse($this->client->getResponse()->isRedirect());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
         $this->assertCount(1, $crawler->filter("div.alert-danger:contains('Your request has been sent')"));
 
         $user->delete();
