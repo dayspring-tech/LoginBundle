@@ -51,6 +51,8 @@ class ForgotResetController extends Controller
      */
     public function forgotPasswordAction(Request $request)
     {
+        $generic_msg = 'Your request has been sent.';
+
         $form = $this->createFormBuilder(array())
             ->add('email', EmailType::class)
             ->getForm();
@@ -86,19 +88,19 @@ class ForgotResetController extends Controller
 
                     $request->getSession()->getFlashBag()->add(
                         "success",
-                        "Check your email for instructions on how to reset your password."
+                        $generic_msg //"Check your email for instructions on how to reset your password."
                     );
                     return $this->redirect($this->generateUrl('_login'));
                 } else {
                     $request->getSession()->getFlashBag()->add(
                         "error",
-                        "User account is disabled."
+                        $generic_msg //"User account is disabled."
                     );
                 }
             } catch (UsernameNotFoundException $e) {
                 $request->getSession()->getFlashBag()->add(
                     "error",
-                    $e->getMessage()
+                    $generic_msg //$e->getMessage()
                 );
             }
         }
