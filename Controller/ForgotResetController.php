@@ -51,7 +51,7 @@ class ForgotResetController extends Controller
      */
     public function forgotPasswordAction(Request $request)
     {
-        $generic_msg = 'Your request has been sent.';
+        $genericMsg = 'Your request has been sent.';
 
         $form = $this->createFormBuilder(array())
             ->add('email', EmailType::class)
@@ -85,24 +85,17 @@ class ForgotResetController extends Controller
                             'text/html'
                         );
                     $this->mailer->send($message);
-
-                    $request->getSession()->getFlashBag()->add(
-                        "success",
-                        $generic_msg //"Check your email for instructions on how to reset your password."
-                    );
-                    return $this->redirect($this->generateUrl('_login'));
-                } else {
-                    $request->getSession()->getFlashBag()->add(
-                        "error",
-                        $generic_msg //"User account is disabled."
-                    );
                 }
             } catch (UsernameNotFoundException $e) {
-                $request->getSession()->getFlashBag()->add(
-                    "error",
-                    $generic_msg //$e->getMessage()
-                );
+                // do not throw an error for UsernameNotFoundException
             }
+
+            $request->getSession()->getFlashBag()->add(
+                "success",
+                $genericMsg
+            );
+            return $this->redirect($this->generateUrl('_login'));
+
         }
 
         return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', array(
