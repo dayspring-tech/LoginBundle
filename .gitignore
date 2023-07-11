@@ -49,3 +49,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 build
+
+docker/mysql/data/
+
+var/cache/
