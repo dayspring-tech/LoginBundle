@@ -26,6 +26,12 @@
         />
 
         <service
+            id="dayspring_login.user_checker"
+            class="Dayspring\LoginBundle\Security\UserChecker"
+            public="false"
+        />
+
+        <service
             id="Symfony\Component\Security\Core\User\UserProviderInterface"
             alias="dayspring_login.user_provider"
             public="false"

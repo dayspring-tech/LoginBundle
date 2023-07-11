@@ -1,0 +1,3 @@
+mysql -h dev_mysql -u devuser -pdevpass mydatabase < Resources/fixtures/00_clear_database.sql
+mysql -h dev_mysql -u devuser -pdevpass mydatabase < Resources/fixtures/01_users.sql
+composer run-script ci-test

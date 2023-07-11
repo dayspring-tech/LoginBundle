@@ -5,5 +5,5 @@ monolog:
     handlers:
         main:
             type: stream
-            path: "%kernel.root_dir%/../../log/symfony.log"
+            path: "%kernel.project_dir%/../../log/symfony.log"
             level: debug

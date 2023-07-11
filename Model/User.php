@@ -5,10 +5,10 @@ namespace Dayspring\LoginBundle\Model;
 use DateTime;
 use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User extends BaseUser implements AdvancedUserInterface
+class User extends BaseUser implements UserInterface
 {
     /**
      * User constructor.
@@ -16,21 +16,6 @@ class User extends BaseUser implements AdvancedUserInterface
     public function __construct()
     {
         $this->setCreatedDate(new DateTime());
-    }
-
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
     }
 
     public function isEnabled()

@@ -3,30 +3,35 @@ namespace Dayspring\LoginBundle\Tests;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 
 class TestKernel extends Kernel
 {
-    public function getRootDir()
+    public function getProjectDir()
     {
-        return __DIR__.'/Resources';
+        return __DIR__;
     }
+
+    public function getCacheDir()
+    {
+        return __DIR__.'/../var/cache';
+    }
+
+    public function getLogDir()
+    {
+        return __DIR__.'/../var/log';
+    }
+
     public function registerBundles()
     {
         $bundles = array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
-//            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-//            new \Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new \Propel\Bundle\PropelBundle\PropelBundle(),
-//            new \Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new \Dayspring\LoginBundle\DayspringLoginBundle(),
-
-//            new JMS\AopBundle\JMSAopBundle(),
-//            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

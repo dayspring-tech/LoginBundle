@@ -1,11 +1,11 @@
-{% extends '::base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
     <div class="row padding-bottom">
         <div class="col-md-4 col-md-offset-4">
-            {% include "::sessionFlash.html.twig" %}
+            {% include "sessionFlash.html.twig" %}
 
             <h1>{{ title }}</h1>
 
