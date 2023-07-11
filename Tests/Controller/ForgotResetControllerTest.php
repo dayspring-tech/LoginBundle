@@ -53,7 +53,7 @@ class ForgotResetControllerTest extends WebTestCase
 
         $this->assertGreaterThan(
             0,
-            $crawler->filter('html:contains("Check your email for instructions on how to reset your")')->count()
+            $crawler->filter('html:contains("Your request has been sent")')->count()
         );
     }
 
@@ -78,8 +78,9 @@ class ForgotResetControllerTest extends WebTestCase
         $form['form[email]'] = $user->getEmail();
         $crawler = $this->client->submit($form);
 
-        $this->assertFalse($this->client->getResponse()->isRedirect());
-        $this->assertCount(1, $crawler->filter("div.alert-danger:contains('User account is disabled.')"));
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
+        $this->assertCount(1, $crawler->filter("html:contains('Your request has been sent')"));
 
         $user->delete();
     }
@@ -97,9 +98,11 @@ class ForgotResetControllerTest extends WebTestCase
         $form['form[email]'] = 'foobar@doesnotexist.com';
         $crawler = $this->client->submit($form);
 
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->followRedirect();
         $this->assertGreaterThan(
             0,
-            $crawler->filter('html:contains("does not exist.")')->count()
+            $crawler->filter('html:contains("Your request has been sent")')->count()
         );
     }
 
