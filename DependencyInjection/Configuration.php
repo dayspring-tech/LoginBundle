@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): \Symfony\Component\Config\Definition\Builder\TreeBuilder
     {
         $treeBuilder = new TreeBuilder('dayspring_login');
         $rootNode = $treeBuilder->getRootNode();

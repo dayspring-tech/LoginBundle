@@ -23,7 +23,7 @@ class TestKernel extends Kernel
         return __DIR__.'/../var/log';
     }
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         $bundles = [new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(), new \Symfony\Bundle\SecurityBundle\SecurityBundle(), new \Symfony\Bundle\TwigBundle\TwigBundle(), new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(), new \Propel\Bundle\PropelBundle\PropelBundle(), new \Dayspring\LoginBundle\DayspringLoginBundle()];
 

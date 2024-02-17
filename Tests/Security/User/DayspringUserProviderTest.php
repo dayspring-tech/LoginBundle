@@ -46,7 +46,7 @@ class DayspringUserProviderTest extends WebTestCase
 
     public function testLoadUserByUsername()
     {
-        $user = $this->userProvider->loadUserByUsername('testuser@example.com');
+        $user = $this->userProvider->loadUserByIdentifier('testuser@example.com');
 
         $this->assertEquals(1, $user->getId());
     }
@@ -58,7 +58,7 @@ class DayspringUserProviderTest extends WebTestCase
 
         $refreshedUser = $this->userProvider->refreshUser($user);
         $this->assertEquals(1, $refreshedUser->getId());
-        $this->assertEquals('testuser@example.com', $refreshedUser->getUsername());
+        $this->assertEquals('testuser@example.com', $refreshedUser->getUserIdentifier());
     }
 
     public function testSupportsClass()
@@ -71,7 +71,7 @@ class DayspringUserProviderTest extends WebTestCase
     public function testLoadUserByUsernameFailure()
     {
         $this->expectException(UsernameNotFoundException::class);
-        $this->userProvider->loadUserByUsername('foobar@doesnotexist.com');
+        $this->userProvider->loadUserByIdentifier('foobar@doesnotexist.com');
     }
 
     public function testRefreshUserFailure()
@@ -92,7 +92,7 @@ class DayspringUserProviderTest extends WebTestCase
 
 class SomeUser implements UserInterface
 {
-    public function getRoles()
+    public function getRoles(): array
     {
     }
 
@@ -101,6 +101,10 @@ class SomeUser implements UserInterface
     }
 
     public function getSalt()
+    {
+    }
+
+    public function getUserIdentifier()
     {
     }
 

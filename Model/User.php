@@ -15,6 +15,7 @@ class User extends BaseUser implements UserInterface
      */
     public function __construct()
     {
+        parent::__construct();
         $this->setCreatedDate(new DateTime());
     }
 
@@ -28,11 +29,16 @@ class User extends BaseUser implements UserInterface
         return $this->getEmail();
     }
 
+    public function getUserIdentifier()
+    {
+        return $this->getEmail();
+    }
+
     public function eraseCredentials()
     {
     }
 
-    public function getRoles($criteria = null, PropelPDO $con = null)
+    public function getRoles($criteria = null, PropelPDO $con = null): array
     {
         $dbRoles = parent::getSecurityRoles($criteria, $con);
 

@@ -11,11 +11,16 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class DayspringUserProvider implements UserProviderInterface
 {
 
+    public function loadUserByUsername($username)
+    {
+        return $this->loadUserByIdentifier($username);
+    }
+
     /**
      * @param $username
      * @return User
      */
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier($username)
     {
         $user = UserQuery::create()
             ->filterByEmail($username)
@@ -36,7 +41,7 @@ class DayspringUserProvider implements UserProviderInterface
      * @param UserInterface $user
      * @return User
      */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): \Symfony\Component\Security\Core\User\UserInterface
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(
@@ -44,10 +49,10 @@ class DayspringUserProvider implements UserProviderInterface
             );
         }
 
-        return $this->loadUserByUsername($user->getUsername());
+        return $this->loadUserByIdentifier($user->getUserIdentifier());
     }
 
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         return $class === \Dayspring\LoginBundle\Model\User::class;
     }

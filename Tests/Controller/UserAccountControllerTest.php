@@ -51,7 +51,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);
@@ -86,7 +86,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
         $crawler = $this->client->submit($form);
 
@@ -113,7 +113,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);

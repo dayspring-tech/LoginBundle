@@ -20,7 +20,7 @@ class UserTest extends WebTestCase
         $user = new User();
         $user->setEmail('helloworld');
 
-        $this->assertEquals('helloworld', $user->getUsername());
+        $this->assertEquals('helloworld', $user->getUserIdentifier());
     }
 
     public function testEraseCredentials()
