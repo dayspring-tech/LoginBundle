@@ -20,26 +20,13 @@ class ChangePasswordType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $builder->add('password', PasswordType::class, array(
-            'attr' => array('class' => 'password-field', 'style' => 'max-width:300px'),
-            'required' => true,
-            'label' => "Enter Your Current Password"
-        ));
+        $builder->add('password', PasswordType::class, ['attr' => ['class' => 'password-field', 'style' => 'max-width:300px'], 'required' => true, 'label' => "Enter Your Current Password"]);
 
-        $builder->add('newPassword', RepeatedType::class, array(
-            'type' => PasswordType::class,
-            'invalid_message' => 'The password fields must match.',
-            'required' => true,
-            'options' => array('attr' => array('class' => 'password-field', 'style' => 'max-width:300px')),
-            'first_options' => array('label' => 'New Password'),
-            'second_options' => array('label' => 'Repeat New Password'),
-        ));
+        $builder->add('newPassword', RepeatedType::class, ['type' => PasswordType::class, 'invalid_message' => 'The password fields must match.', 'required' => true, 'options' => ['attr' => ['class' => 'password-field', 'style' => 'max-width:300px']], 'first_options' => ['label' => 'New Password'], 'second_options' => ['label' => 'Repeat New Password']]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'validation_groups' => array('Default', 'password'),
-        ));
+        $resolver->setDefaults(['validation_groups' => ['Default', 'password']]);
     }
 }

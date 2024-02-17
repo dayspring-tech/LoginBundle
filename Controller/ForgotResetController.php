@@ -54,7 +54,7 @@ class ForgotResetController extends AbstractController
     {
         $genericMsg = 'Your request has been sent. If an account was found, an email has been sent. Please check your email for further instructions.';
 
-        $form = $this->createFormBuilder(array())
+        $form = $this->createFormBuilder([])
             ->add('email', EmailType::class)
             ->getForm();
         if ($request->getMethod() == "POST") {
@@ -69,9 +69,7 @@ class ForgotResetController extends AbstractController
                     $user->generateResetToken();
 
                     $subject = "Reset Password";
-                    $data = array(
-                        'user' => $user
-                    );
+                    $data = ['user' => $user];
                     $fromAddress = $this->getParameter('login_bundle.from_address');
                     $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
 
@@ -105,9 +103,7 @@ class ForgotResetController extends AbstractController
 
         }
 
-        return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', array(
-            'form' => $form->createView(),
-        ));
+        return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', ['form' => $form->createView()]);
     }
 
     /**
@@ -138,9 +134,7 @@ class ForgotResetController extends AbstractController
                     return $this->redirect($this->generateUrl('_login'));
                 }
             }
-            return $this->render('@DayspringLogin/ForgotReset/resetPassword.html.twig', array(
-                'form' => $form->createView()
-            ));
+            return $this->render('@DayspringLogin/ForgotReset/resetPassword.html.twig', ['form' => $form->createView()]);
         } else {
             throw new AccessDeniedHttpException("No User found with this reset token.");
         }
@@ -178,8 +172,6 @@ class ForgotResetController extends AbstractController
                 return $this->redirect($this->generateUrl("account_dashboard"));
             }
         }
-        return $this->render('@DayspringLogin/ForgotReset/changePassword.html.twig', array(
-            'form' => $form->createView()
-        ));
+        return $this->render('@DayspringLogin/ForgotReset/changePassword.html.twig', ['form' => $form->createView()]);
     }
 }

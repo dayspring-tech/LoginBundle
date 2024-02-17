@@ -17,15 +17,12 @@ class ConfigurationTest extends TestCase
 
     public function testConfiguration()
     {
-        $config = array();
+        $config = [];
 
         $processor = new Processor();
-        $configuration = new Configuration(array());
-        $config = $processor->processConfiguration($configuration, array($config));
+        $configuration = new Configuration([]);
+        $config = $processor->processConfiguration($configuration, [$config]);
 
-        $this->assertEquals(array(
-            'from_address' => 'nobody@dayspring-tech.com',
-            'from_display_name' => 'Test Application'
-        ), $config, 'Config should have from_address and from_display_name');
+        $this->assertEquals(['from_address' => 'nobody@dayspring-tech.com', 'from_display_name' => 'Test Application'], $config, 'Config should have from_address and from_display_name');
     }
 }

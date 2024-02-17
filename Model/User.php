@@ -81,7 +81,7 @@ class User extends BaseUser implements UserInterface
         if ($this->getResetTokenExpire() === null || $hours >= 2) {
             // token was expired, generate a new one
             do {
-                $token = md5(rand());
+                $token = md5(random_int(0, mt_getrandmax()));
                 $query = UserQuery::create()->filterByResetToken($token);
             } while ($query->count() > 0);
 

@@ -20,20 +20,11 @@ class ResetPasswordType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('password', RepeatedType::class, array(
-            'type' => PasswordType::class,
-            'invalid_message' => 'The password fields must match.',
-            'required' => true,
-            'options' => array('attr' => array('class' => 'password-field')),
-            'first_options' => array('label' => 'Password'),
-            'second_options' => array('label' => 'Repeat Password')
-        ));
+        $builder->add('password', RepeatedType::class, ['type' => PasswordType::class, 'invalid_message' => 'The password fields must match.', 'required' => true, 'options' => ['attr' => ['class' => 'password-field']], 'first_options' => ['label' => 'Password'], 'second_options' => ['label' => 'Repeat Password']]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'validation_groups' => array('Default', 'password'),
-        ));
+        $resolver->setDefaults(['validation_groups' => ['Default', 'password']]);
     }
 }

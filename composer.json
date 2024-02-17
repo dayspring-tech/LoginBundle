@@ -51,7 +51,8 @@
         "symfony/phpunit-bridge": "^5.0|^6.0",
         "phpunit/phpunit": "^8.5.23|^9.0",
         "symfony/browser-kit": "^4.0|^5.0",
-        "symfony/css-selector": "^4.0|^5.0"
+        "symfony/css-selector": "^4.0|^5.0",
+        "rector/rector": "^0.19.0"
     },
     "conflict": {
         "symfony/password-hasher": ">=6.0"

@@ -49,7 +49,7 @@ class DayspringUserProvider implements UserProviderInterface
 
     public function supportsClass($class)
     {
-        return $class === 'Dayspring\LoginBundle\Model\User';
+        return $class === \Dayspring\LoginBundle\Model\User::class;
     }
 
     /**

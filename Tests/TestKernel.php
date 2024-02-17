@@ -25,16 +25,9 @@ class TestKernel extends Kernel
 
     public function registerBundles()
     {
-        $bundles = array(
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
-            new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new \Propel\Bundle\PropelBundle\PropelBundle(),
-            new \Dayspring\LoginBundle\DayspringLoginBundle(),
-        );
+        $bundles = [new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(), new \Symfony\Bundle\SecurityBundle\SecurityBundle(), new \Symfony\Bundle\TwigBundle\TwigBundle(), new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(), new \Propel\Bundle\PropelBundle\PropelBundle(), new \Dayspring\LoginBundle\DayspringLoginBundle()];
 
-        if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
+        if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new \Symfony\Bundle\MonologBundle\MonologBundle();
         }
 
@@ -43,9 +36,9 @@ class TestKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/Resources/config/config_test.yml');
-        if (class_exists('Symfony\Component\Asset\Package')) {
+        if (class_exists(\Symfony\Component\Asset\Package::class)) {
             $loader->load(function (ContainerBuilder $container) {
-                $container->loadFromExtension('framework', array('assets' => array()));
+                $container->loadFromExtension('framework', ['assets' => []]);
             });
         }
     }
