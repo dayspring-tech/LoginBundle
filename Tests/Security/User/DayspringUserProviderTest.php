@@ -15,7 +15,7 @@ use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DayspringUserProviderTest extends WebTestCase
@@ -70,7 +70,7 @@ class DayspringUserProviderTest extends WebTestCase
 
     public function testLoadUserByUsernameFailure()
     {
-        $this->expectException(UsernameNotFoundException::class);
+        $this->expectException(UserNotFoundException::class);
         $this->userProvider->loadUserByIdentifier('foobar@doesnotexist.com');
     }
 
@@ -104,7 +104,7 @@ class SomeUser implements UserInterface
     {
     }
 
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
     }
 

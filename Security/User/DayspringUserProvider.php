@@ -4,7 +4,7 @@ namespace Dayspring\LoginBundle\Security\User;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -20,15 +20,15 @@ class DayspringUserProvider implements UserProviderInterface
      * @param $username
      * @return User
      */
-    public function loadUserByIdentifier($username)
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = UserQuery::create()
-            ->filterByEmail($username)
+            ->filterByEmail($identifier)
             ->findOne();
 
         if ($user == null) {
-            throw new UsernameNotFoundException(
-                sprintf('Username "%s" does not exist.', $username)
+            throw new UserNotFoundException(
+                sprintf('Username "%s" does not exist.', $identifier)
             );
         } else {
             $user->reload();
@@ -41,7 +41,7 @@ class DayspringUserProvider implements UserProviderInterface
      * @param UserInterface $user
      * @return User
      */
-    public function refreshUser(UserInterface $user): \Symfony\Component\Security\Core\User\UserInterface
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(

@@ -5,10 +5,11 @@ namespace Dayspring\LoginBundle\Model;
 use DateTime;
 use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User extends BaseUser implements UserInterface
+class User extends BaseUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * User constructor.
@@ -29,7 +30,7 @@ class User extends BaseUser implements UserInterface
         return $this->getEmail();
     }
 
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
         return $this->getEmail();
     }
@@ -71,9 +72,9 @@ class User extends BaseUser implements UserInterface
      *      groups={"password"}
      * )
      */
-    public function getPassword()
+    public function getPassword(): string
     {
-        return parent::getPassword();
+        return parent::getPassword() ?? '';
     }
 
     public function generateResetToken()
