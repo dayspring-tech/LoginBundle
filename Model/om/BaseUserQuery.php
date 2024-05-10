@@ -17,6 +17,7 @@ use Dayspring\LoginBundle\Model\SecurityRole;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserPeer;
 use Dayspring\LoginBundle\Model\UserQuery;
+use Dayspring\LoginBundle\Model\UserWebauthn;
 
 /**
  * @method UserQuery orderById($order = Criteria::ASC) Order by the id column
@@ -42,6 +43,10 @@ use Dayspring\LoginBundle\Model\UserQuery;
  * @method UserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method UserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method UserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method UserQuery leftJoinUserWebauthn($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserWebauthn relation
+ * @method UserQuery rightJoinUserWebauthn($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserWebauthn relation
+ * @method UserQuery innerJoinUserWebauthn($relationAlias = null) Adds a INNER JOIN clause to the query using the UserWebauthn relation
  *
  * @method UserQuery leftJoinRoleUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the RoleUser relation
  * @method UserQuery rightJoinRoleUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RoleUser relation
@@ -574,6 +579,80 @@ abstract class BaseUserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserPeer::IS_ACTIVE, $isActive, $comparison);
+    }
+
+    /**
+     * Filter the query by a related UserWebauthn object
+     *
+     * @param   UserWebauthn|PropelObjectCollection $userWebauthn  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUserWebauthn($userWebauthn, $comparison = null)
+    {
+        if ($userWebauthn instanceof UserWebauthn) {
+            return $this
+                ->addUsingAlias(UserPeer::ID, $userWebauthn->getUserId(), $comparison);
+        } elseif ($userWebauthn instanceof PropelObjectCollection) {
+            return $this
+                ->useUserWebauthnQuery()
+                ->filterByPrimaryKeys($userWebauthn->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserWebauthn() only accepts arguments of type UserWebauthn or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the UserWebauthn relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinUserWebauthn($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserWebauthn');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserWebauthn');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the UserWebauthn relation UserWebauthn object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dayspring\LoginBundle\Model\UserWebauthnQuery A secondary query class using the current class as primary query
+     */
+    public function useUserWebauthnQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUserWebauthn($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserWebauthn', '\Dayspring\LoginBundle\Model\UserWebauthnQuery');
     }
 
     /**

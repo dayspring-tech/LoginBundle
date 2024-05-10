@@ -28,6 +28,15 @@ class UserAccountController extends AbstractController
     }
 
     /**
+     * @Route("/account/passkeys", name="account_passkeys")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     */
+    public function passkeysAction()
+    {
+        return $this->render('@DayspringLogin/UserAccount/passkeys.html.twig');
+    }
+
+    /**
      * @Route("/users", name="list_users")
      * @Security("is_granted('ROLE_Admin')")
      */

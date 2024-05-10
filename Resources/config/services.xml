@@ -19,6 +19,13 @@
             autoconfigure="true"
         />
 
+        <prototype
+            namespace="Dayspring\LoginBundle\Service\"
+            resource="../../Service/*"
+            autowire="true"
+            autoconfigure="true"
+        />
+
         <service
             id="dayspring_login.user_provider"
             class="Dayspring\LoginBundle\Security\User\DayspringUserProvider"

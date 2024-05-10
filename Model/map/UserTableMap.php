@@ -16,7 +16,7 @@ use \TableMap;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package    propel.generator..map
+ * @package    propel.generator.vendor.dayspring-tech.login-bundle.Model.map
  */
 class UserTableMap extends TableMap
 {
@@ -24,7 +24,7 @@ class UserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.map.UserTableMap';
+    const CLASS_NAME = 'vendor.dayspring-tech.login-bundle.Model.map.UserTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -39,7 +39,7 @@ class UserTableMap extends TableMap
         $this->setName('users');
         $this->setPhpName('User');
         $this->setClassname('Dayspring\\LoginBundle\\Model\\User');
-        $this->setPackage('');
+        $this->setPackage('vendor.dayspring-tech.login-bundle.Model');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
@@ -59,6 +59,7 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('UserWebauthn', 'Dayspring\\LoginBundle\\Model\\UserWebauthn', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'UserWebauthns');
         $this->addRelation('RoleUser', 'Dayspring\\LoginBundle\\Model\\RoleUser', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'RoleUsers');
         $this->addRelation('SecurityRole', 'Dayspring\\LoginBundle\\Model\\SecurityRole', RelationMap::MANY_TO_MANY, array(), null, null, 'SecurityRoles');
     } // buildRelations()

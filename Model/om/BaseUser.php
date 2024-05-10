@@ -22,6 +22,8 @@ use Dayspring\LoginBundle\Model\SecurityRoleQuery;
 use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserPeer;
 use Dayspring\LoginBundle\Model\UserQuery;
+use Dayspring\LoginBundle\Model\UserWebauthn;
+use Dayspring\LoginBundle\Model\UserWebauthnQuery;
 
 abstract class BaseUser extends BaseObject implements Persistent
 {
@@ -100,6 +102,12 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected $is_active;
 
     /**
+     * @var        PropelObjectCollection|UserWebauthn[] Collection to store aggregation of UserWebauthn objects.
+     */
+    protected $collUserWebauthns;
+    protected $collUserWebauthnsPartial;
+
+    /**
      * @var        PropelObjectCollection|RoleUser[] Collection to store aggregation of RoleUser objects.
      */
     protected $collRoleUsers;
@@ -135,6 +143,12 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $securityRolesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $userWebauthnsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -668,6 +682,8 @@ abstract class BaseUser extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collUserWebauthns = null;
+
             $this->collRoleUsers = null;
 
             $this->collSecurityRoles = null;
@@ -817,6 +833,23 @@ abstract class BaseUser extends BaseObject implements Persistent
                 foreach ($this->collSecurityRoles as $securityRole) {
                     if ($securityRole->isModified()) {
                         $securityRole->save($con);
+                    }
+                }
+            }
+
+            if ($this->userWebauthnsScheduledForDeletion !== null) {
+                if (!$this->userWebauthnsScheduledForDeletion->isEmpty()) {
+                    UserWebauthnQuery::create()
+                        ->filterByPrimaryKeys($this->userWebauthnsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->userWebauthnsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collUserWebauthns !== null) {
+                foreach ($this->collUserWebauthns as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
                     }
                 }
             }
@@ -1028,6 +1061,14 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
 
 
+                if ($this->collUserWebauthns !== null) {
+                    foreach ($this->collUserWebauthns as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collRoleUsers !== null) {
                     foreach ($this->collRoleUsers as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1143,6 +1184,9 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collUserWebauthns) {
+                $result['UserWebauthns'] = $this->collUserWebauthns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collRoleUsers) {
                 $result['RoleUsers'] = $this->collRoleUsers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1339,6 +1383,12 @@ abstract class BaseUser extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getUserWebauthns() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addUserWebauthn($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getRoleUsers() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addRoleUser($relObj->copy($deepCopy));
@@ -1406,9 +1456,237 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('UserWebauthn' == $relationName) {
+            $this->initUserWebauthns();
+        }
         if ('RoleUser' == $relationName) {
             $this->initRoleUsers();
         }
+    }
+
+    /**
+     * Clears out the collUserWebauthns collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addUserWebauthns()
+     */
+    public function clearUserWebauthns()
+    {
+        $this->collUserWebauthns = null; // important to set this to null since that means it is uninitialized
+        $this->collUserWebauthnsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collUserWebauthns collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialUserWebauthns($v = true)
+    {
+        $this->collUserWebauthnsPartial = $v;
+    }
+
+    /**
+     * Initializes the collUserWebauthns collection.
+     *
+     * By default this just sets the collUserWebauthns collection to an empty array (like clearcollUserWebauthns());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initUserWebauthns($overrideExisting = true)
+    {
+        if (null !== $this->collUserWebauthns && !$overrideExisting) {
+            return;
+        }
+        $this->collUserWebauthns = new PropelObjectCollection();
+        $this->collUserWebauthns->setModel('UserWebauthn');
+    }
+
+    /**
+     * Gets an array of UserWebauthn objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|UserWebauthn[] List of UserWebauthn objects
+     * @throws PropelException
+     */
+    public function getUserWebauthns($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collUserWebauthnsPartial && !$this->isNew();
+        if (null === $this->collUserWebauthns || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserWebauthns) {
+                // return empty collection
+                $this->initUserWebauthns();
+            } else {
+                $collUserWebauthns = UserWebauthnQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collUserWebauthnsPartial && count($collUserWebauthns)) {
+                      $this->initUserWebauthns(false);
+
+                      foreach ($collUserWebauthns as $obj) {
+                        if (false == $this->collUserWebauthns->contains($obj)) {
+                          $this->collUserWebauthns->append($obj);
+                        }
+                      }
+
+                      $this->collUserWebauthnsPartial = true;
+                    }
+
+                    $collUserWebauthns->getInternalIterator()->rewind();
+
+                    return $collUserWebauthns;
+                }
+
+                if ($partial && $this->collUserWebauthns) {
+                    foreach ($this->collUserWebauthns as $obj) {
+                        if ($obj->isNew()) {
+                            $collUserWebauthns[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUserWebauthns = $collUserWebauthns;
+                $this->collUserWebauthnsPartial = false;
+            }
+        }
+
+        return $this->collUserWebauthns;
+    }
+
+    /**
+     * Sets a collection of UserWebauthn objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $userWebauthns A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setUserWebauthns(PropelCollection $userWebauthns, PropelPDO $con = null)
+    {
+        $userWebauthnsToDelete = $this->getUserWebauthns(new Criteria(), $con)->diff($userWebauthns);
+
+
+        $this->userWebauthnsScheduledForDeletion = $userWebauthnsToDelete;
+
+        foreach ($userWebauthnsToDelete as $userWebauthnRemoved) {
+            $userWebauthnRemoved->setUser(null);
+        }
+
+        $this->collUserWebauthns = null;
+        foreach ($userWebauthns as $userWebauthn) {
+            $this->addUserWebauthn($userWebauthn);
+        }
+
+        $this->collUserWebauthns = $userWebauthns;
+        $this->collUserWebauthnsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related UserWebauthn objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related UserWebauthn objects.
+     * @throws PropelException
+     */
+    public function countUserWebauthns(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collUserWebauthnsPartial && !$this->isNew();
+        if (null === $this->collUserWebauthns || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserWebauthns) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getUserWebauthns());
+            }
+            $query = UserWebauthnQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collUserWebauthns);
+    }
+
+    /**
+     * Method called to associate a UserWebauthn object to this object
+     * through the UserWebauthn foreign key attribute.
+     *
+     * @param    UserWebauthn $l UserWebauthn
+     * @return User The current object (for fluent API support)
+     */
+    public function addUserWebauthn(UserWebauthn $l)
+    {
+        if ($this->collUserWebauthns === null) {
+            $this->initUserWebauthns();
+            $this->collUserWebauthnsPartial = true;
+        }
+
+        if (!in_array($l, $this->collUserWebauthns->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddUserWebauthn($l);
+
+            if ($this->userWebauthnsScheduledForDeletion and $this->userWebauthnsScheduledForDeletion->contains($l)) {
+                $this->userWebauthnsScheduledForDeletion->remove($this->userWebauthnsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	UserWebauthn $userWebauthn The userWebauthn object to add.
+     */
+    protected function doAddUserWebauthn($userWebauthn)
+    {
+        $this->collUserWebauthns[]= $userWebauthn;
+        $userWebauthn->setUser($this);
+    }
+
+    /**
+     * @param	UserWebauthn $userWebauthn The userWebauthn object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeUserWebauthn($userWebauthn)
+    {
+        if ($this->getUserWebauthns()->contains($userWebauthn)) {
+            $this->collUserWebauthns->remove($this->collUserWebauthns->search($userWebauthn));
+            if (null === $this->userWebauthnsScheduledForDeletion) {
+                $this->userWebauthnsScheduledForDeletion = clone $this->collUserWebauthns;
+                $this->userWebauthnsScheduledForDeletion->clear();
+            }
+            $this->userWebauthnsScheduledForDeletion[]= clone $userWebauthn;
+            $userWebauthn->setUser(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1888,6 +2166,11 @@ abstract class BaseUser extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collUserWebauthns) {
+                foreach ($this->collUserWebauthns as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collRoleUsers) {
                 foreach ($this->collRoleUsers as $o) {
                     $o->clearAllReferences($deep);
@@ -1902,6 +2185,10 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collUserWebauthns instanceof PropelCollection) {
+            $this->collUserWebauthns->clearIterator();
+        }
+        $this->collUserWebauthns = null;
         if ($this->collRoleUsers instanceof PropelCollection) {
             $this->collRoleUsers->clearIterator();
         }

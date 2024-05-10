@@ -27,10 +27,109 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Log in</button>
+                <button type="button" class="btn btn-primary" id="btnAuthBegin">Log in with WebAuthn</button>
             </form>
 
             <p><a href="{{ path('forgot_password') }}">Forgot password?</a></p>
+
+
+            <p id="authSuccess" class="success"></p>
+            <p id="authError" class="error"></p>
+            <textarea id="authDebug" spellcheck="false"></textarea>
+
         </div>
     </div>
 
+{% endblock %}
+{% block page_javascripts %}
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.es5.umd.min.js"></script>
+
+    <script>
+        const { startAuthentication, browserSupportsWebAuthn, startRegistration } = SimpleWebAuthnBrowser;
+
+        function stopSubmit(event) {
+            event.preventDefault();
+        }
+
+        /**
+         * A simple way to control how debug content is written to a debug console element
+         */
+        function printDebug(elemDebug, title, output) {
+            if (elemDebug.innerHTML !== '') {
+                elemDebug.innerHTML += '\n';
+            }
+            elemDebug.innerHTML += `// ${title}\n`;
+            elemDebug.innerHTML += `${output}\n`;
+        }
+
+        // Hide the Begin button if the browser is incapable of using WebAuthn
+        if (!browserSupportsWebAuthn()) {
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.systemError').innerText =
+                "It seems this browser doesn't support WebAuthn...";
+        } else {
+            function hideAuthForm() {
+                // document.getElementById('inputUsername').style.display = 'none';
+            }
+
+
+            /**
+             * Authentication
+             */
+            document.querySelector('#btnAuthBegin').addEventListener('click', async () => {
+                const elemSuccess = document.querySelector('#authSuccess');
+                const elemError = document.querySelector('#authError');
+                const elemDebug = document.querySelector('#authDebug');
+
+                // Reset success/error messages
+                elemSuccess.innerHTML = '';
+                elemError.innerHTML = '';
+                elemDebug.innerHTML = '';
+
+                const resp = await fetch('{{ path('passkeys_authentication_options') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.querySelector('input#username').value
+                    })
+                })
+
+                let asseResp;
+                try {
+                    const opts = await resp.json();
+                    printDebug(elemDebug, 'Authentication Options', JSON.stringify(opts, null, 2));
+
+                    hideAuthForm();
+
+                    asseResp = await startAuthentication(opts);
+                    printDebug(elemDebug, 'Authentication Response', JSON.stringify(asseResp, null, 2));
+                } catch (error) {
+                    elemError.innerText = error;
+                    throw new Error(error);
+                }
+
+                const verificationResp = await fetch('{{ path('passkeys_authentication_verify') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(asseResp),
+                });
+
+                const verificationJSON = await verificationResp.json();
+                printDebug(elemDebug, 'Server Response', JSON.stringify(verificationJSON, null, 2));
+
+                if (verificationJSON && verificationJSON.verified) {
+                    elemSuccess.innerHTML = `User authenticated!`;
+                    window.location.href = verificationJSON.redirect;
+                } else {
+                    elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
+                        verificationJSON,
+                    )}</pre>`;
+                }
+            });
+        }
+    </script>
 {% endblock %}

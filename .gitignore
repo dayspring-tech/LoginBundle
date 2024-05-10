@@ -29,6 +29,8 @@ var/cache
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
+.idea/copilot
+
 ## File-based project format:
 *.iws
 
