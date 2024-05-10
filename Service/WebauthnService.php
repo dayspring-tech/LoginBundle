@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -58,6 +59,7 @@ class WebauthnService extends AbstractAuthenticator
         protected LoggerInterface $logger,
         protected SessionInterface $session,
         protected UserProviderInterface $userProvider,
+        protected RequestStack $requestStack,
         protected Security $security
     ) {
         // The manager will receive data to load and select the appropriate
@@ -101,8 +103,6 @@ class WebauthnService extends AbstractAuthenticator
         // RP Entity i.e. the application
         $rpEntity = PublicKeyCredentialRpEntity::create(
             'My Super Secured Application', //Name
-            'localhost',              //ID
-            null                            //Icon
         );
 
         // User Entity
@@ -139,7 +139,7 @@ class WebauthnService extends AbstractAuthenticator
         $publicKeyCredentialSource = $this->authenticatorAttestationResponseValidator->check(
             $publicKeyCredential->response,
             $publicKeyCredentialCreationOptions,
-            'localhost',
+            $this->requestStack->getMainRequest()->getHost(),
             ['localhost']
         );
 
@@ -219,7 +219,7 @@ class WebauthnService extends AbstractAuthenticator
             $publicKeyCredentialSource,
             $publicKeyCredential->response,
             $publicKeyCredentialRequestOptions,
-            'localhost',
+            $this->requestStack->getMainRequest()->getHost(),
             $userWebauthn->getUser()->getUsername(),
             ['localhost']
         );
