@@ -47,6 +47,7 @@ class UserWebauthnTableMap extends TableMap
         $this->addColumn('credential_id', 'CredentialId', 'VARCHAR', true, 255, null);
         $this->addColumn('credential_data', 'CredentialData', 'LONGVARCHAR', true, null, null);
         $this->addColumn('is_active', 'IsActive', 'BOOLEAN', true, 1, true);
+        $this->addColumn('last_used_at', 'LastUsedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         // validators

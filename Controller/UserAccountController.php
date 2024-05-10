@@ -3,6 +3,7 @@ namespace Dayspring\LoginBundle\Controller;
 
 use Dayspring\LoginBundle\Form\Type\UserType;
 use Dayspring\LoginBundle\Model\User;
+use Dayspring\LoginBundle\Service\WebauthnService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -11,11 +12,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class UserAccountController extends AbstractController
 {
-    protected $userProvider;
-
-    public function __construct(UserProviderInterface $userProvider)
+    public function __construct(protected UserProviderInterface $userProvider, protected WebauthnService $webauthnService)
     {
-        $this->userProvider = $userProvider;
     }
 
     /**
@@ -33,7 +31,21 @@ class UserAccountController extends AbstractController
      */
     public function passkeysAction()
     {
-        return $this->render('@DayspringLogin/UserAccount/passkeys.html.twig');
+        $user = $this->getUser();
+        return $this->render('@DayspringLogin/UserAccount/passkeys.html.twig', [
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * @Route("/account/passkeys/disable/{id}", name="account_passkeys_disable")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     */
+    public function passkeysDeleteAction($id)
+    {
+        $this->webauthnService->disablePasskey($id);
+        
+        return $this->redirectToRoute('account_passkeys');
     }
 
     /**

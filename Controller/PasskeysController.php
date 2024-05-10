@@ -3,6 +3,7 @@
 namespace Dayspring\LoginBundle\Controller;
 
 use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
+use Dayspring\LoginBundle\Model\User;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +30,13 @@ class PasskeysController extends AbstractController
      */
     public function generateRegistrationOptionsAction()
     {
-        $registrationOptions = $this->webauthnService->generateRegistrationOptions();
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw new Exception('User type not supported. Got ' . get_class($user) . ' instead of Dayspring/LoginBundle/User.');
+        }
+
+        $registrationOptions = $this->webauthnService->generateRegistrationOptions($user->getUsername());
         $this->session->set('passkeys.registrationOptions', json_encode($registrationOptions));
         return new JsonResponse($registrationOptions);
     }

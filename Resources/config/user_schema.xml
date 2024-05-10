@@ -27,6 +27,7 @@
         <column name="credential_id" phpName="CredentialId" type="VARCHAR" size="255" required="true"/>
         <column name="credential_data" phpName="CredentialData" type="LONGVARCHAR" sqlType="JSON" required="true"/>
         <column name="is_active" phpName="IsActive" type="BOOLEAN" required="true" default="true"/>
+        <column name="last_used_at" phpName="LastUsedAt" type="TIMESTAMP" required="false"/>
 
         <behavior name="timestampable" />
 

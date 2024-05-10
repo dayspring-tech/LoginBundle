@@ -23,6 +23,7 @@ use Dayspring\LoginBundle\Model\UserWebauthnQuery;
  * @method UserWebauthnQuery orderByCredentialId($order = Criteria::ASC) Order by the credential_id column
  * @method UserWebauthnQuery orderByCredentialData($order = Criteria::ASC) Order by the credential_data column
  * @method UserWebauthnQuery orderByIsActive($order = Criteria::ASC) Order by the is_active column
+ * @method UserWebauthnQuery orderByLastUsedAt($order = Criteria::ASC) Order by the last_used_at column
  * @method UserWebauthnQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method UserWebauthnQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -31,6 +32,7 @@ use Dayspring\LoginBundle\Model\UserWebauthnQuery;
  * @method UserWebauthnQuery groupByCredentialId() Group by the credential_id column
  * @method UserWebauthnQuery groupByCredentialData() Group by the credential_data column
  * @method UserWebauthnQuery groupByIsActive() Group by the is_active column
+ * @method UserWebauthnQuery groupByLastUsedAt() Group by the last_used_at column
  * @method UserWebauthnQuery groupByCreatedAt() Group by the created_at column
  * @method UserWebauthnQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -49,6 +51,7 @@ use Dayspring\LoginBundle\Model\UserWebauthnQuery;
  * @method UserWebauthn findOneByCredentialId(string $credential_id) Return the first UserWebauthn filtered by the credential_id column
  * @method UserWebauthn findOneByCredentialData(string $credential_data) Return the first UserWebauthn filtered by the credential_data column
  * @method UserWebauthn findOneByIsActive(boolean $is_active) Return the first UserWebauthn filtered by the is_active column
+ * @method UserWebauthn findOneByLastUsedAt(string $last_used_at) Return the first UserWebauthn filtered by the last_used_at column
  * @method UserWebauthn findOneByCreatedAt(string $created_at) Return the first UserWebauthn filtered by the created_at column
  * @method UserWebauthn findOneByUpdatedAt(string $updated_at) Return the first UserWebauthn filtered by the updated_at column
  *
@@ -57,6 +60,7 @@ use Dayspring\LoginBundle\Model\UserWebauthnQuery;
  * @method array findByCredentialId(string $credential_id) Return UserWebauthn objects filtered by the credential_id column
  * @method array findByCredentialData(string $credential_data) Return UserWebauthn objects filtered by the credential_data column
  * @method array findByIsActive(boolean $is_active) Return UserWebauthn objects filtered by the is_active column
+ * @method array findByLastUsedAt(string $last_used_at) Return UserWebauthn objects filtered by the last_used_at column
  * @method array findByCreatedAt(string $created_at) Return UserWebauthn objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return UserWebauthn objects filtered by the updated_at column
  */
@@ -164,7 +168,7 @@ abstract class BaseUserWebauthnQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `user_id`, `credential_id`, `credential_data`, `is_active`, `created_at`, `updated_at` FROM `users_webauthn` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `user_id`, `credential_id`, `credential_data`, `is_active`, `last_used_at`, `created_at`, `updated_at` FROM `users_webauthn` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -422,6 +426,49 @@ abstract class BaseUserWebauthnQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserWebauthnPeer::IS_ACTIVE, $isActive, $comparison);
+    }
+
+    /**
+     * Filter the query on the last_used_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLastUsedAt('2011-03-14'); // WHERE last_used_at = '2011-03-14'
+     * $query->filterByLastUsedAt('now'); // WHERE last_used_at = '2011-03-14'
+     * $query->filterByLastUsedAt(array('max' => 'yesterday')); // WHERE last_used_at < '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $lastUsedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return UserWebauthnQuery The current query, for fluid interface
+     */
+    public function filterByLastUsedAt($lastUsedAt = null, $comparison = null)
+    {
+        if (is_array($lastUsedAt)) {
+            $useMinMax = false;
+            if (isset($lastUsedAt['min'])) {
+                $this->addUsingAlias(UserWebauthnPeer::LAST_USED_AT, $lastUsedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($lastUsedAt['max'])) {
+                $this->addUsingAlias(UserWebauthnPeer::LAST_USED_AT, $lastUsedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserWebauthnPeer::LAST_USED_AT, $lastUsedAt, $comparison);
     }
 
     /**

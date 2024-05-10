@@ -5,112 +5,55 @@
 {% block content %}
     <div class="row padding-bottom">
         <div class="col-md-4 col-md-offset-4">
-            {% include "sessionFlash.html.twig" %}
-
-            <h1>Passkeys</h1>
-
-            <div class="controls">
-                <section id="registration">
-                    <button id="btnRegBegin">
-                        <strong>🚪&nbsp;Register</strong>
-                    </button>
-                    <p id="regSuccess" class="success"></p>
-                    <p id="regError" class="error"></p>
-                    <details open>
-                        <summary>Console</summary>
-                        <textarea id="regDebug" spellcheck="false"></textarea>
-                    </details>
-                </section>
-
-                <section id="authentication">
-                    <form onsubmit="stopSubmit(event)">
-                        <section id="inputUsername">
-                            <label for="username">Username</label>
-                            <input type="text" name="username" autocomplete="username webauthn" autofocus />
-                            <br />
-                            <label for="password">Password</label>
-                            <input type="password" name="password" autocomplete="current-password webauthn" />
-                            <br />
-                        </section>
-                        <button id="btnAuthBegin">
-                            <strong>🔐&nbsp;Authenticate</strong>
-                        </button>
-                    </form>
-                    <p id="authSuccess" class="success"></p>
-                    <p id="authError" class="error"></p>
-                    <details open>
-                        <summary>Console</summary>
-                        <textarea id="authDebug" spellcheck="false"></textarea>
-                    </details>
-                </section>
+            <div class="messages">
+                {% include "sessionFlash.html.twig" %}
             </div>
 
-            <p class="systemError"></p>
+            <h1>Passkeys</h1>
+            <p>Passkeys are a secure way to authenticate without the need for a password. They are stored on your device and can be used to authenticate you without the need for a password.</p>
+
+            <button class="btn btn-primary" id="btnRegBegin">Register new Passkey</button>
+
+            <ul>
+                {% for passkey in user.userWebauthns %}
+                    {% if passkey.isActive %}
+                    <li>Created {{ passkey.createdAt|date('m/d/Y') }}, Last Used {{ passkey.lastUsedAt ? passkey.lastUsedAt|date('m/d/Y') : 'never used' }} <a href="{{ path('account_passkeys_disable', {'id': passkey.id}) }}" class="btn btn-danger btn-xs">Disable</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}
 
 {% block page_javascripts %}
     <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.es5.umd.min.js"></script>
-
     <script>
-        const { startAuthentication, browserSupportsWebAuthn, startRegistration } = SimpleWebAuthnBrowser;
+        const { browserSupportsWebAuthn, startRegistration } = SimpleWebAuthnBrowser;
 
-        function stopSubmit(event) {
-            event.preventDefault();
-        }
-
-        /**
-         * A simple way to control how debug content is written to a debug console element
-         */
-        function printDebug(elemDebug, title, output) {
-            if (elemDebug.innerHTML !== '') {
-                elemDebug.innerHTML += '\n';
-            }
-            elemDebug.innerHTML += `// ${title}\n`;
-            elemDebug.innerHTML += `${output}\n`;
+        function displayAlert(message, type = 'danger') {
+            $('#messages').prepend(`<div class="alert alert-${type}">${message}</div>`);
         }
 
         // Hide the Begin button if the browser is incapable of using WebAuthn
         if (!browserSupportsWebAuthn()) {
-            document.querySelector('.controls').style.display = 'none';
-            document.querySelector('.systemError').innerText =
-                "It seems this browser doesn't support WebAuthn...";
+            displayAlert('<div class="alert alert-danger">Sorry, this browser does not support Passkeys</div>');
+            document.querySelector('#btnRegBegin').style.display = 'none';
         } else {
-            function hideAuthForm() {
-                document.getElementById('inputUsername').style.display = 'none';
-            }
-
             /**
              * Registration
              */
             document.querySelector('#btnRegBegin').addEventListener('click', async () => {
-                const elemSuccess = document.querySelector('#regSuccess');
-                const elemError = document.querySelector('#regError');
-                const elemDebug = document.querySelector('#regDebug');
-
-                // Reset success/error messages
-                elemSuccess.innerHTML = '';
-                elemError.innerHTML = '';
-                elemDebug.innerHTML = '';
-
                 const resp = await fetch('{{ path('passkeys_registration_options') }}');
 
                 let attResp;
                 try {
                     const opts = await resp.json();
-
-                    printDebug(elemDebug, 'Registration Options', JSON.stringify(opts, null, 2));
-
-                    hideAuthForm();
-
                     attResp = await startRegistration(opts);
-                    printDebug(elemDebug, 'Registration Response', JSON.stringify(attResp, null, 2));
                 } catch (error) {
                     if (error.name === 'InvalidStateError') {
-                        elemError.innerText = 'Error: Authenticator was probably already registered by user';
+                        displayAlert('Error: Authenticator was probably already registered by user');
                     } else {
-                        elemError.innerText = error;
+                        displayAlert(error);
                     }
 
                     throw error;
@@ -125,71 +68,12 @@
                 });
 
                 const verificationJSON = await verificationResp.json();
-                printDebug(elemDebug, 'Server Response', JSON.stringify(verificationJSON, null, 2));
 
                 if (verificationJSON && verificationJSON.verified) {
-                    elemSuccess.innerHTML = `Authenticator registered!`;
+                    // refresh the page to show the new key
+                    window.location.href = window.location.href;
                 } else {
-                    elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
-                        verificationJSON,
-                    )}</pre>`;
-                }
-            });
-
-            /**
-             * Authentication
-             */
-            document.querySelector('#btnAuthBegin').addEventListener('click', async () => {
-                const elemSuccess = document.querySelector('#authSuccess');
-                const elemError = document.querySelector('#authError');
-                const elemDebug = document.querySelector('#authDebug');
-
-                // Reset success/error messages
-                elemSuccess.innerHTML = '';
-                elemError.innerHTML = '';
-                elemDebug.innerHTML = '';
-
-                const resp = await fetch('{{ path('passkeys_authentication_options') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: document.querySelector('input[name="username"]').value
-                    })
-                })
-
-                let asseResp;
-                try {
-                    const opts = await resp.json();
-                    printDebug(elemDebug, 'Authentication Options', JSON.stringify(opts, null, 2));
-
-                    hideAuthForm();
-
-                    asseResp = await startAuthentication(opts);
-                    printDebug(elemDebug, 'Authentication Response', JSON.stringify(asseResp, null, 2));
-                } catch (error) {
-                    elemError.innerText = error;
-                    throw new Error(error);
-                }
-
-                const verificationResp = await fetch('{{ path('passkeys_authentication_verify') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(asseResp),
-                });
-
-                const verificationJSON = await verificationResp.json();
-                printDebug(elemDebug, 'Server Response', JSON.stringify(verificationJSON, null, 2));
-
-                if (verificationJSON && verificationJSON.verified) {
-                    elemSuccess.innerHTML = `User authenticated!`;
-                } else {
-                    elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
-                        verificationJSON,
-                    )}</pre>`;
+                    displayAlert('Oh no, something went wrong! Response: ' + JSON.stringify(verificationJSON));
                 }
             });
         }

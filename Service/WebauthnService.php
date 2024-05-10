@@ -7,6 +7,7 @@ use Dayspring\LoginBundle\Model\UserWebauthn;
 use Dayspring\LoginBundle\Model\UserWebauthnQuery;
 use Dayspring\LoginBundle\Security\User\DayspringUserProvider;
 use Exception;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,6 +43,8 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use \ParagonIE\ConstantTime\Base64;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Webauthn\AuthenticationExtensions\AuthenticationExtension;
+use Webauthn\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 
 class WebauthnService extends AbstractAuthenticator
 {
@@ -93,15 +96,8 @@ class WebauthnService extends AbstractAuthenticator
         );
     }
 
-    public function generateRegistrationOptions()
+    public function generateRegistrationOptions($userHandle)
     {
-        $user = $this->security->getUser();
-
-        if (!$user instanceof User) {
-            throw new Exception('User type not supported. Got ' . get_class($user) . ' instead of Dayspring/LoginBundle/User.');
-        }
-
-
         // RP Entity i.e. the application
         $rpEntity = PublicKeyCredentialRpEntity::create(
             'My Super Secured Application', //Name
@@ -111,9 +107,9 @@ class WebauthnService extends AbstractAuthenticator
 
         // User Entity
         $userEntity = PublicKeyCredentialUserEntity::create(
-            $user->getUsername(),
-            $user->getUsername(),
-            $user->getUsername(),
+            $userHandle,
+            $userHandle,
+            $userHandle,
             null                                    //Icon
         );
 
@@ -132,12 +128,6 @@ class WebauthnService extends AbstractAuthenticator
 
     public function verifyRegistrationResponse($response, $publicKeyCredentialCreationOptions)
     {
-        $user = $this->security->getUser();
-
-        if (!$user instanceof User) {
-            throw new Exception('User type not supported. Got ' . get_class($user) . ' instead of Dayspring/LoginBundle/User.');
-        }
-
         $publicKeyCredentialCreationOptions = PublicKeyCredentialCreationOptions::createFromArray($publicKeyCredentialCreationOptions);
 
         $publicKeyCredential = $this->publicKeyCredentialLoader->load($response);
@@ -154,9 +144,20 @@ class WebauthnService extends AbstractAuthenticator
         );
 
         $this->logger->info('verifyRegistrationResponse success', ['publicKeyCredentialSource' => $publicKeyCredentialSource]);
+
+        try {
+            $user = $this->userProvider->loadUserByUsername($publicKeyCredentialSource->userHandle);
+        } catch (UsernameNotFoundException $e) {
+            // create a new user
+            $user = new User();
+            $user->setUsername($publicKeyCredentialSource->userHandle);
+            $user->save();
+        }
+
+        // save the credential source
         $userWebauthn = new UserWebauthn();
         $userWebauthn
-            ->setCredentialId($publicKeyCredentialSource->publicKeyCredentialId)
+            ->setCredentialId(Base64UrlSafe::encodeUnpadded($publicKeyCredentialSource->publicKeyCredentialId))
             ->setCredentialData(json_encode($publicKeyCredentialSource))
             ->setUser($user)
             ->save();
@@ -185,7 +186,7 @@ class WebauthnService extends AbstractAuthenticator
             $publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::create(
                 random_bytes(32), // Challenge
                 allowCredentials: $allowedCredentials,
-                userVerification: PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_PREFERRED
+                userVerification: PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_PREFERRED,
             );
 
             return $publicKeyCredentialRequestOptions;
@@ -206,7 +207,9 @@ class WebauthnService extends AbstractAuthenticator
         }
 
         $userWebauthn = UserWebauthnQuery::create()
-            ->findOneByCredentialId($publicKeyCredential->id);
+            ->filterByCredentialId($publicKeyCredential->id)
+            ->filterByIsActive(true)
+            ->findOne();
         if (!$userWebauthn) {
             throw new AuthenticationException('No credential found for the given credential ID: '.$publicKeyCredential->id);
         }
@@ -222,8 +225,22 @@ class WebauthnService extends AbstractAuthenticator
         );
 
         $this->logger->info('verifyAuthenticationResponse success', ['publicKeyCredentialSource' => $publicKeyCredentialSource]);
+        
+        $userWebauthn
+            ->setLastUsedAt(new \DateTime())
+            ->save();
 
         return $userWebauthn->getUser();
+    }
+
+    public function disablePasskey($id)
+    {
+        $userWebauthn = UserWebauthnQuery::create()->findOneById($id);
+        if ($userWebauthn) {
+            $userWebauthn
+                ->setIsActive(false)
+                ->save();
+        }
     }
 
     public function supports(Request $request): ?bool

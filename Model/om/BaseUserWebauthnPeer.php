@@ -30,13 +30,13 @@ abstract class BaseUserWebauthnPeer
     const TM_CLASS = 'Dayspring\\LoginBundle\\Model\\map\\UserWebauthnTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /** the column name for the id field */
     const ID = 'users_webauthn.id';
@@ -52,6 +52,9 @@ abstract class BaseUserWebauthnPeer
 
     /** the column name for the is_active field */
     const IS_ACTIVE = 'users_webauthn.is_active';
+
+    /** the column name for the last_used_at field */
+    const LAST_USED_AT = 'users_webauthn.last_used_at';
 
     /** the column name for the created_at field */
     const CREATED_AT = 'users_webauthn.created_at';
@@ -78,12 +81,12 @@ abstract class BaseUserWebauthnPeer
      * e.g. UserWebauthnPeer::$fieldNames[UserWebauthnPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'UserId', 'CredentialId', 'CredentialData', 'IsActive', 'CreatedAt', 'UpdatedAt', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'userId', 'credentialId', 'credentialData', 'isActive', 'createdAt', 'updatedAt', ),
-        BasePeer::TYPE_COLNAME => array (UserWebauthnPeer::ID, UserWebauthnPeer::USER_ID, UserWebauthnPeer::CREDENTIAL_ID, UserWebauthnPeer::CREDENTIAL_DATA, UserWebauthnPeer::IS_ACTIVE, UserWebauthnPeer::CREATED_AT, UserWebauthnPeer::UPDATED_AT, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'USER_ID', 'CREDENTIAL_ID', 'CREDENTIAL_DATA', 'IS_ACTIVE', 'CREATED_AT', 'UPDATED_AT', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'user_id', 'credential_id', 'credential_data', 'is_active', 'created_at', 'updated_at', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'UserId', 'CredentialId', 'CredentialData', 'IsActive', 'LastUsedAt', 'CreatedAt', 'UpdatedAt', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'userId', 'credentialId', 'credentialData', 'isActive', 'lastUsedAt', 'createdAt', 'updatedAt', ),
+        BasePeer::TYPE_COLNAME => array (UserWebauthnPeer::ID, UserWebauthnPeer::USER_ID, UserWebauthnPeer::CREDENTIAL_ID, UserWebauthnPeer::CREDENTIAL_DATA, UserWebauthnPeer::IS_ACTIVE, UserWebauthnPeer::LAST_USED_AT, UserWebauthnPeer::CREATED_AT, UserWebauthnPeer::UPDATED_AT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'USER_ID', 'CREDENTIAL_ID', 'CREDENTIAL_DATA', 'IS_ACTIVE', 'LAST_USED_AT', 'CREATED_AT', 'UPDATED_AT', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'user_id', 'credential_id', 'credential_data', 'is_active', 'last_used_at', 'created_at', 'updated_at', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -93,12 +96,12 @@ abstract class BaseUserWebauthnPeer
      * e.g. UserWebauthnPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'UserId' => 1, 'CredentialId' => 2, 'CredentialData' => 3, 'IsActive' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'userId' => 1, 'credentialId' => 2, 'credentialData' => 3, 'isActive' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        BasePeer::TYPE_COLNAME => array (UserWebauthnPeer::ID => 0, UserWebauthnPeer::USER_ID => 1, UserWebauthnPeer::CREDENTIAL_ID => 2, UserWebauthnPeer::CREDENTIAL_DATA => 3, UserWebauthnPeer::IS_ACTIVE => 4, UserWebauthnPeer::CREATED_AT => 5, UserWebauthnPeer::UPDATED_AT => 6, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'USER_ID' => 1, 'CREDENTIAL_ID' => 2, 'CREDENTIAL_DATA' => 3, 'IS_ACTIVE' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'user_id' => 1, 'credential_id' => 2, 'credential_data' => 3, 'is_active' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'UserId' => 1, 'CredentialId' => 2, 'CredentialData' => 3, 'IsActive' => 4, 'LastUsedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'userId' => 1, 'credentialId' => 2, 'credentialData' => 3, 'isActive' => 4, 'lastUsedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        BasePeer::TYPE_COLNAME => array (UserWebauthnPeer::ID => 0, UserWebauthnPeer::USER_ID => 1, UserWebauthnPeer::CREDENTIAL_ID => 2, UserWebauthnPeer::CREDENTIAL_DATA => 3, UserWebauthnPeer::IS_ACTIVE => 4, UserWebauthnPeer::LAST_USED_AT => 5, UserWebauthnPeer::CREATED_AT => 6, UserWebauthnPeer::UPDATED_AT => 7, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'USER_ID' => 1, 'CREDENTIAL_ID' => 2, 'CREDENTIAL_DATA' => 3, 'IS_ACTIVE' => 4, 'LAST_USED_AT' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'user_id' => 1, 'credential_id' => 2, 'credential_data' => 3, 'is_active' => 4, 'last_used_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -177,6 +180,7 @@ abstract class BaseUserWebauthnPeer
             $criteria->addSelectColumn(UserWebauthnPeer::CREDENTIAL_ID);
             $criteria->addSelectColumn(UserWebauthnPeer::CREDENTIAL_DATA);
             $criteria->addSelectColumn(UserWebauthnPeer::IS_ACTIVE);
+            $criteria->addSelectColumn(UserWebauthnPeer::LAST_USED_AT);
             $criteria->addSelectColumn(UserWebauthnPeer::CREATED_AT);
             $criteria->addSelectColumn(UserWebauthnPeer::UPDATED_AT);
         } else {
@@ -185,6 +189,7 @@ abstract class BaseUserWebauthnPeer
             $criteria->addSelectColumn($alias . '.credential_id');
             $criteria->addSelectColumn($alias . '.credential_data');
             $criteria->addSelectColumn($alias . '.is_active');
+            $criteria->addSelectColumn($alias . '.last_used_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }
