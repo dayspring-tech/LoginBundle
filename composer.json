@@ -35,7 +35,7 @@
         "symfony/twig-bundle": "^5.4",
         "symfony/yaml": "^5.4",
         "symfony/form": "^5.4",
-        "symfony/validator": "^5.4.1",
+        "symfony/validator": "^5.4",
         "symfony/console": "^5.4",
         "symfony/routing": "^5.4",
         "symfony/asset": "^5.4",
