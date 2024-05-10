@@ -55,8 +55,12 @@ class PasskeysController extends AbstractController
      */
     public function generateAuthenticationOptionsAction(Request $request)
     {
-        $body = $request->getContent();
-        $username = json_decode($body, true)['username'];
+        if ($request->getMethod() === 'POST') {
+            $body = $request->getContent();
+            $username = json_decode($body, true)['username'];
+        } else {
+            $username = null;
+        }
 
         $authenticationOptions = $this->webauthnService->generateAuthenticationOptions($username);
         $this->session->set('passkeys.authenticationOptions', json_encode($authenticationOptions));
@@ -68,6 +72,6 @@ class PasskeysController extends AbstractController
      */
     public function verifyAuthenticationResponseAction(Request $request)
     {
-
+        // request should be intercepted by WebauthnService as a Symfony Authenticator
     }
 }

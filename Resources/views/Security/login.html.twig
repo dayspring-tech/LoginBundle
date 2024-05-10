@@ -9,7 +9,7 @@
 
             <h1>Log In</h1>
 
-            <form action="{{ path('_login_check') }}" method="post">
+            <form action="{{ path('_login_check') }}" method="post" id="loginForm">
                 {% if error %}
                     <div class="alert alert-danger">
                         {{ error.message|trans({}, 'messages')|raw }}
@@ -19,23 +19,20 @@
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" class="form-control" id="username" name="_username"
-                           value="{{ last_username }}" placeholder="username@myemail.com">
+                           value="{{ last_username }}" placeholder="username@myemail.com"
+                           autocomplete="username webauthn">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="_password">
+                    <input type="password" class="form-control" id="password" name="_password"
+                           autocomplete="password webauthn">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Log in</button>
-                <button type="button" class="btn btn-primary" id="btnAuthBegin">Log in with WebAuthn</button>
+                <button type="button" class="btn btn-primary" id="btnLoginWithPasskey">Log in with Passkey</button>
             </form>
 
             <p><a href="{{ path('forgot_password') }}">Forgot password?</a></p>
-
-
-            <p id="authSuccess" class="success"></p>
-            <p id="authError" class="error"></p>
-            <textarea id="authDebug" spellcheck="false"></textarea>
 
         </div>
     </div>
@@ -47,45 +44,46 @@
     <script>
         const { startAuthentication, browserSupportsWebAuthn, startRegistration } = SimpleWebAuthnBrowser;
 
-        function stopSubmit(event) {
-            event.preventDefault();
-        }
+        // conditional login
+        fetch('{{ path('passkeys_authentication_options') }}')
+            .then(resp => resp.json())
+            .then(opts => {
+                startAuthentication(opts, true)
+                    .then(async asseResp => {
+                        const verificationResp = await fetch('{{ path('passkeys_authentication_verify') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(asseResp),
+                        });
 
-        /**
-         * A simple way to control how debug content is written to a debug console element
-         */
-        function printDebug(elemDebug, title, output) {
-            if (elemDebug.innerHTML !== '') {
-                elemDebug.innerHTML += '\n';
-            }
-            elemDebug.innerHTML += `// ${title}\n`;
-            elemDebug.innerHTML += `${output}\n`;
-        }
+                        const verificationJSON = await verificationResp.json();
+
+                        if (verificationJSON && verificationJSON.verified) {
+                            window.location.href = verificationJSON.redirect;
+                        } else {
+                            // show error message in UI
+                            // user likely doesn't have a passkey registered with the app
+                            console.log(verificationJSON.error);
+                            $('#loginForm').prepend('<div class="alert alert-danger">You do not have a passkey registered with the app. Please log in with your username and password.</div>');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('(Autofill)', err);
+                    });
+            });
+        // end conditional login
+
 
         // Hide the Begin button if the browser is incapable of using WebAuthn
         if (!browserSupportsWebAuthn()) {
-            document.querySelector('.controls').style.display = 'none';
-            document.querySelector('.systemError').innerText =
-                "It seems this browser doesn't support WebAuthn...";
+            document.querySelector('#btnLoginWithPasskey').style.display = 'none';
         } else {
-            function hideAuthForm() {
-                // document.getElementById('inputUsername').style.display = 'none';
-            }
-
-
             /**
              * Authentication
              */
-            document.querySelector('#btnAuthBegin').addEventListener('click', async () => {
-                const elemSuccess = document.querySelector('#authSuccess');
-                const elemError = document.querySelector('#authError');
-                const elemDebug = document.querySelector('#authDebug');
-
-                // Reset success/error messages
-                elemSuccess.innerHTML = '';
-                elemError.innerHTML = '';
-                elemDebug.innerHTML = '';
-
+            document.querySelector('#btnLoginWithPasskey').addEventListener('click', async () => {
                 const resp = await fetch('{{ path('passkeys_authentication_options') }}', {
                     method: 'POST',
                     headers: {
@@ -99,14 +97,8 @@
                 let asseResp;
                 try {
                     const opts = await resp.json();
-                    printDebug(elemDebug, 'Authentication Options', JSON.stringify(opts, null, 2));
-
-                    hideAuthForm();
-
                     asseResp = await startAuthentication(opts);
-                    printDebug(elemDebug, 'Authentication Response', JSON.stringify(asseResp, null, 2));
                 } catch (error) {
-                    elemError.innerText = error;
                     throw new Error(error);
                 }
 
@@ -119,15 +111,13 @@
                 });
 
                 const verificationJSON = await verificationResp.json();
-                printDebug(elemDebug, 'Server Response', JSON.stringify(verificationJSON, null, 2));
 
                 if (verificationJSON && verificationJSON.verified) {
-                    elemSuccess.innerHTML = `User authenticated!`;
                     window.location.href = verificationJSON.redirect;
                 } else {
-                    elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
-                        verificationJSON,
-                    )}</pre>`;
+                    // show error message in UI
+                    console.log(verificationJSON.error);
+                    $('#loginForm').prepend('<div class="alert alert-danger">You do not have a passkey registered with the app. Please log in with your username and password.</div>');
                 }
             });
         }

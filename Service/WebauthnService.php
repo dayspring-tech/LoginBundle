@@ -164,19 +164,23 @@ class WebauthnService extends AbstractAuthenticator
         return true;
     }
 
-    public function generateAuthenticationOptions($username)
+    public function generateAuthenticationOptions($username = null)
     {
-        $this->logger->info(sprintf('generateAuthenticationOptions for %s', $username));
         try {
-            $user = $this->userProvider->loadUserByUsername($username);
-            $registeredAuthenticators = $user->getUserWebauthns()->getArrayCopy();
-            $allowedCredentials = array_map(
-                static function (UserWebauthn $userWebauthn): PublicKeyCredentialDescriptor {
-                    $credential = PublicKeyCredentialSource::createFromArray(json_decode($userWebauthn->getCredentialData(), true));
-                    return $credential->getPublicKeyCredentialDescriptor();
-                },
-                $registeredAuthenticators
-            );
+            $allowedCredentials = [];
+            if ($username) {
+                $this->logger->info(sprintf('generateAuthenticationOptions for %s', $username));
+                $user = $this->userProvider->loadUserByUsername($username);
+                $registeredAuthenticators = $user->getUserWebauthns()->getArrayCopy();
+                $allowedCredentials = array_map(
+                    static function (UserWebauthn $userWebauthn): PublicKeyCredentialDescriptor {
+                        $credential = PublicKeyCredentialSource::createFromArray(json_decode($userWebauthn->getCredentialData(),
+                            true));
+                        return $credential->getPublicKeyCredentialDescriptor();
+                    },
+                    $registeredAuthenticators
+                );
+            }
 
             $publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::create(
                 random_bytes(32), // Challenge
@@ -198,13 +202,13 @@ class WebauthnService extends AbstractAuthenticator
         $publicKeyCredential = $this->publicKeyCredentialLoader->load($response);
 
         if (!$publicKeyCredential->response instanceof AuthenticatorAssertionResponse) {
-            throw new Exception('The response is not an instance of AuthenticatorAssertionResponse');
+            throw new AuthenticationException('The response is not an instance of AuthenticatorAssertionResponse');
         }
 
         $userWebauthn = UserWebauthnQuery::create()
             ->findOneByCredentialId($publicKeyCredential->id);
         if (!$userWebauthn) {
-            throw new Exception('No credential found for the given credential ID: '.$publicKeyCredential->id);
+            throw new AuthenticationException('No credential found for the given credential ID: '.$publicKeyCredential->id);
         }
         $publicKeyCredentialSource = PublicKeyCredentialSource::createFromArray(json_decode($userWebauthn->getCredentialData(), true));
 
@@ -252,7 +256,8 @@ class WebauthnService extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
+        $this->logger->error('Authentication failed', ['exception' => $exception]);
+        return new JsonResponse(['error' => 'Authentication with passkeys failed.'], Response::HTTP_UNAUTHORIZED);
     }
 
 
