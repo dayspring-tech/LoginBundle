@@ -12,6 +12,7 @@ use Dayspring\LoginBundle\DependencyInjection\DayspringLoginExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use PHPUnit\Framework\TestCase;
+use function var_dump;
 
 class ExtensionTest extends TestCase
 {
@@ -27,7 +28,7 @@ class ExtensionTest extends TestCase
 
         $this->assertEquals(5, count($container->getParameterBag()->all()), '->load() loads the services.xml file');
 
-        $this->assertEquals(7, count($container->getDefinitions()));
+        $this->assertEquals(9, count($container->getDefinitions()));
     }
 
     private function createContainer()
