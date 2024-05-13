@@ -10,6 +10,7 @@
             autowire="false"
             autoconfigure="false"
             public="true">
+            <bind key="$formLoginAuthenticator" type="service" id="security.authenticator.form_login.secured_area" />
         </defaults>
 
         <prototype
@@ -35,6 +36,11 @@
         <service
             id="dayspring_login.user_checker"
             class="Dayspring\LoginBundle\Security\UserChecker"
+            public="false"
+        />
+        <service
+            id="Dayspring\LoginBundle\Security\UserChecker"
+            alias="dayspring_login.user_checker"
             public="false"
         />
 

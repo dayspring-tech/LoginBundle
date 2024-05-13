@@ -5,23 +5,22 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
+use Dayspring\LoginBundle\Security\UserChecker;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
 
 class ForgotResetController extends AbstractController
 {
     public function __construct(
-        protected \Symfony\Bundle\SecurityBundle\Security $security,
+        protected Security $security,
         protected \Symfony\Component\Security\Core\User\UserProviderInterface $userProvider,
         protected RequestStack $requestStack,
         protected \Symfony\Component\Mailer\MailerInterface $mailer,
@@ -119,7 +118,7 @@ class ForgotResetController extends AbstractController
     }
 
     #[Route(path: '/account/change-password', name: 'change_password')]
-    public function changePasswordAction(Request $request)
+    public function changePasswordAction(Request $request, UserChecker $checker, UserAuthenticatorInterface $userAuthenticator, FormLoginAuthenticator $formLoginAuthenticator)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -134,7 +133,8 @@ class ForgotResetController extends AbstractController
                 $currentUser->setPassword($encoded);
                 $currentUser->save();
 
-                $this->security->login($currentUser);
+                $checker->checkPreAuth($currentUser);
+                $userAuthenticator->authenticateUser($currentUser, $formLoginAuthenticator, $request);
 
                 $this->requestStack->getSession()->getFlashBag()->add('success', 'New password has been saved.');
 
