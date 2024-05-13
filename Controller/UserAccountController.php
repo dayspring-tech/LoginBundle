@@ -6,7 +6,6 @@ use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Service\WebauthnService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 

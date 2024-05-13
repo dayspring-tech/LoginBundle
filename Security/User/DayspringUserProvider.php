@@ -42,7 +42,7 @@ class DayspringUserProvider implements UserProviderInterface
      * @param UserInterface $user
      * @return User
      */
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(
@@ -53,7 +53,7 @@ class DayspringUserProvider implements UserProviderInterface
         return $this->loadUserByUsername($user->getUsername());
     }
 
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         return $class === \Dayspring\LoginBundle\Model\User::class;
     }
