@@ -5,16 +5,19 @@ namespace Dayspring\LoginBundle\Model;
 use DateTime;
 use Dayspring\LoginBundle\Model\om\BaseUser;
 use PropelPDO;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User extends BaseUser implements UserInterface
+class User extends BaseUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * User constructor.
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->setCreatedDate(new DateTime());
     }
 
@@ -25,6 +28,11 @@ class User extends BaseUser implements UserInterface
 
     public function getUsername()
     {
+        return $this->getUserIdentifier();
+    }
+
+    public function getUserIdentifier(): string
+    {
         return $this->getEmail();
     }
 
@@ -32,7 +40,7 @@ class User extends BaseUser implements UserInterface
     {
     }
 
-    public function getRoles($criteria = null, PropelPDO $con = null)
+    public function getRoles($criteria = null, PropelPDO $con = null): array
     {
         $dbRoles = parent::getSecurityRoles($criteria, $con);
 
@@ -44,28 +52,15 @@ class User extends BaseUser implements UserInterface
         return $roles;
     }
 
-    /**
-     * @Assert\Email()
-     */
+    #[Assert\Email]
     public function getEmail()
     {
         return parent::getEmail();
     }
 
-    /**
-     * @Assert\NotBlank(
-     *     message="You must enter a new password",
-     *     groups={"password"}
-     * )
-     * @Assert\Length(
-     *      min = 8,
-     *      max = 50,
-     *      minMessage = "Your password must be at least {{ limit }} characters long.",
-     *      maxMessage = "Your password must be no longer than {{ limit }} characters.",
-     *      groups={"password"}
-     * )
-     */
-    public function getPassword()
+    #[Assert\NotBlank(message: 'You must enter a new password', groups: ['password'])]
+    #[Assert\Length(min: 8, max: 50, minMessage: 'Your password must be at least {{ limit }} characters long.', maxMessage: 'Your password must be no longer than {{ limit }} characters.', groups: ['password'])]
+    public function getPassword(): ?string
     {
         return parent::getPassword();
     }
@@ -81,7 +76,7 @@ class User extends BaseUser implements UserInterface
         if ($this->getResetTokenExpire() === null || $hours >= 2) {
             // token was expired, generate a new one
             do {
-                $token = md5(rand());
+                $token = md5(random_int(0, mt_getrandmax()));
                 $query = UserQuery::create()->filterByResetToken($token);
             } while ($query->count() > 0);
 

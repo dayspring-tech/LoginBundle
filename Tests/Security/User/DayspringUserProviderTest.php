@@ -31,7 +31,7 @@ class DayspringUserProviderTest extends WebTestCase
         parent::setUp();
 
         $application = new Application(static::$kernel);
-        $application->add(new FixturesLoadCommand(static::$kernel->getContainer()));
+        $application->add(new FixturesLoadCommand(static::getContainer()));
 
         $command = $application->find('propel:fixtures:load');
         $commandTester = new CommandTester($command);
@@ -65,12 +65,12 @@ class DayspringUserProviderTest extends WebTestCase
     {
         $user = new User();
 
-        $this->assertTrue($this->userProvider->supportsClass(get_class($user)));
+        $this->assertTrue($this->userProvider->supportsClass($user::class));
     }
 
     public function testLoadUserByUsernameFailure()
     {
-        $this->expectException(UsernameNotFoundException::class);
+        $this->expectException(\Symfony\Component\Security\Core\Exception\UserNotFoundException::class);
         $this->userProvider->loadUserByUsername('foobar@doesnotexist.com');
     }
 
@@ -86,14 +86,15 @@ class DayspringUserProviderTest extends WebTestCase
     {
         $user = new SomeUser();
 
-        $this->assertFalse($this->userProvider->supportsClass(get_class($user)));
+        $this->assertFalse($this->userProvider->supportsClass($user::class));
     }
 }
 
 class SomeUser implements UserInterface
 {
-    public function getRoles()
+    public function getRoles(): array
     {
+        return [];
     }
 
     public function getPassword()
@@ -106,6 +107,11 @@ class SomeUser implements UserInterface
 
     public function getUsername()
     {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return '';
     }
 
     public function eraseCredentials()

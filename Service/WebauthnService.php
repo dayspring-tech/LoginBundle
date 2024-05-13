@@ -57,7 +57,6 @@ class WebauthnService extends AbstractAuthenticator
 
     public function __construct(
         protected LoggerInterface $logger,
-        protected SessionInterface $session,
         protected UserProviderInterface $userProvider,
         protected RequestStack $requestStack,
         protected Security $security
@@ -147,7 +146,7 @@ class WebauthnService extends AbstractAuthenticator
 
         try {
             $user = $this->userProvider->loadUserByUsername($publicKeyCredentialSource->userHandle);
-        } catch (UsernameNotFoundException $e) {
+        } catch (\Symfony\Component\Security\Core\Exception\UserNotFoundException) {
             // create a new user
             $user = new User();
             $user->setUsername($publicKeyCredentialSource->userHandle);
@@ -190,7 +189,7 @@ class WebauthnService extends AbstractAuthenticator
             );
 
             return $publicKeyCredentialRequestOptions;
-        } catch (UsernameNotFoundException $e) {
+        } catch (\Symfony\Component\Security\Core\Exception\UserNotFoundException) {
             return null;
         }
     }
@@ -251,15 +250,15 @@ class WebauthnService extends AbstractAuthenticator
             $supports = $publicKeyCredential->response instanceof AuthenticatorAssertionResponse;
             $this->logger->debug('supports: '. ($supports ? 'true' : 'false'));
             return $supports;
-        } catch (\Throwable $throwable) {
+        } catch (\Throwable) {
             return false;
         }
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(Request $request): Passport
     {
         $body = $request->getContent();
-        $authenticationOptions = json_decode($this->session->get('passkeys.authenticationOptions'), true);
+        $authenticationOptions = json_decode((string) $this->requestStack->getSession()->get('passkeys.authenticationOptions'), true);
 
         $user = $this->verifyAuthenticationResponse($body, $authenticationOptions);
 

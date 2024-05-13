@@ -19,7 +19,7 @@ class WebTestCase extends BaseWebTestCase
 
     protected static $application;
 
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
         return TestKernel::class;
     }
@@ -34,7 +34,7 @@ class WebTestCase extends BaseWebTestCase
      */
     static protected function createService($id)
     {
-        $service = static::$kernel->getContainer()->get($id);
+        $service = static::getContainer()->get($id);
 
         return $service;
     }

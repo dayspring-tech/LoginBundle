@@ -7,6 +7,7 @@ use Dayspring\LoginBundle\Model\User;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -18,37 +19,35 @@ use function json_encode;
 class PasskeysController extends AbstractController
 {
     public function __construct(
-        protected SessionInterface $session,
+        protected RequestStack $requestStack,
         protected WebauthnService $webauthnService,
     ) {
     }
 
 
-    /**
-     * @Route("/account/passkeys/registrationOptions", name="passkeys_registration_options")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     */
+    #[Route(path: '/account/passkeys/registrationOptions', name: 'passkeys_registration_options')]
     public function generateRegistrationOptionsAction()
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $user = $this->getUser();
 
         if (!$user instanceof User) {
-            throw new Exception('User type not supported. Got ' . get_class($user) . ' instead of Dayspring/LoginBundle/User.');
+            throw new Exception('User type not supported. Got ' . ($user !== null ? $user::class : self::class) . ' instead of Dayspring/LoginBundle/User.');
         }
 
         $registrationOptions = $this->webauthnService->generateRegistrationOptions($user->getUsername());
-        $this->session->set('passkeys.registrationOptions', json_encode($registrationOptions));
+        $this->requestStack->getSession()->set('passkeys.registrationOptions', json_encode($registrationOptions));
         return new JsonResponse($registrationOptions);
     }
 
-    /**
-     * @Route("/account/passkeys/verifyRegistration", name="passkeys_registration_verify")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     */
+    #[Route(path: '/account/passkeys/verifyRegistration', name: 'passkeys_registration_verify')]
     public function verifyRegistrationResponseAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $body = $request->getContent();
-        $registrationOptions = json_decode($this->session->get('passkeys.registrationOptions'), true);
+        $registrationOptions = json_decode((string) $this->requestStack->getSession()->get('passkeys.registrationOptions'), true);
 
         if ($this->webauthnService->verifyRegistrationResponse($body, $registrationOptions)) {
             return new JsonResponse(['verified' => true]);
@@ -57,9 +56,7 @@ class PasskeysController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/login/passkeys/authenticationOptions", name="passkeys_authentication_options")
-     */
+    #[Route(path: '/login/passkeys/authenticationOptions', name: 'passkeys_authentication_options')]
     public function generateAuthenticationOptionsAction(Request $request)
     {
         if ($request->getMethod() === 'POST') {
@@ -74,9 +71,7 @@ class PasskeysController extends AbstractController
         return new JsonResponse($authenticationOptions);
     }
 
-    /**
-     * @Route("/login/passkeys/verifyAuthentication", name="passkeys_authentication_verify")
-     */
+    #[Route(path: '/login/passkeys/verifyAuthentication', name: 'passkeys_authentication_verify')]
     public function verifyAuthenticationResponseAction(Request $request)
     {
         // request should be intercepted by WebauthnService as a Symfony Authenticator

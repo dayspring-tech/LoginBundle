@@ -16,56 +16,51 @@ class UserAccountController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/account", name="account_dashboard")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     */
+    #[Route(path: '/account', name: 'account_dashboard')]
     public function dashboardAction()
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         return $this->render('@DayspringLogin/UserAccount/dashboard.html.twig');
     }
 
-    /**
-     * @Route("/account/passkeys", name="account_passkeys")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     */
+    #[Route(path: '/account/passkeys', name: 'account_passkeys')]
     public function passkeysAction()
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $user = $this->getUser();
         return $this->render('@DayspringLogin/UserAccount/passkeys.html.twig', [
             'user' => $user
         ]);
     }
 
-    /**
-     * @Route("/account/passkeys/disable/{id}", name="account_passkeys_disable")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     */
+    #[Route(path: '/account/passkeys/disable/{id}', name: 'account_passkeys_disable')]
     public function passkeysDeleteAction($id)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $this->webauthnService->disablePasskey($id);
         
         return $this->redirectToRoute('account_passkeys');
     }
 
-    /**
-     * @Route("/users", name="list_users")
-     * @Security("is_granted('ROLE_Admin')")
-     */
+    #[Route(path: '/users', name: 'list_users')]
     public function usersAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_Admin');
+
         $users = $this->userProvider->getUsers();
 
-        return $this->render('@DayspringLogin/UserAccount/list.html.twig', array('users' => $users));
+        return $this->render('@DayspringLogin/UserAccount/list.html.twig', ['users' => $users]);
     }
 
-    /**
-     * @Route("/user/edit/{userId}", name="edit_user")
-     * @Route("/user/new", name="new_user", defaults={"userId" = null})
-     * @Security("is_granted('ROLE_Admin')")
-     */
+    #[Route(path: '/user/edit/{userId}', name: 'edit_user')]
+    #[Route(path: '/user/new', name: 'new_user', defaults: ['userId' => null])]
     public function editUserAction(Request $request, $userId)
     {
+        $this->denyAccessUnlessGranted('ROLE_Admin');
+
         if ($userId) {
             $user = $this->userProvider->loadUserById($userId);
         } else {
@@ -86,10 +81,7 @@ class UserAccountController extends AbstractController
 
         return $this->render(
             '@DayspringLogin/UserAccount/edit.html.twig',
-            array(
-                'form' => $form->createView(),
-                'title' => $userId ? 'Edit User' : 'Create New User'
-            )
+            ['form' => $form->createView(), 'title' => $userId ? 'Edit User' : 'Create New User']
         );
     }
 }

@@ -29,32 +29,21 @@ class ChangePasswordEntity
         return $this->password;
     }
 
-    /**
-     * @param mixed $password
-     */
-    public function setPassword($password)
+    public function setPassword(mixed $password)
     {
         $this->password = $password;
     }
 
     /**
-     * @Assert\Length(
-     *      min = 8,
-     *      max = 50,
-     *      minMessage = "Your password must be at least {{ limit }} characters long.",
-     *      maxMessage = "Your password must be no longer than {{ limit }} characters."
-     * )
      * @return mixed
      */
+    #[Assert\Length(min: 8, max: 50, minMessage: 'Your password must be at least {{ limit }} characters long.', maxMessage: 'Your password must be no longer than {{ limit }} characters.')]
     public function getNewPassword()
     {
         return $this->newPassword;
     }
 
-    /**
-     * @param mixed $newPassword
-     */
-    public function setNewPassword($newPassword)
+    public function setNewPassword(mixed $newPassword)
     {
         $this->newPassword = $newPassword;
     }

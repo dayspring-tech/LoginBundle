@@ -13,7 +13,7 @@ class AuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?\Symfony\Component\HttpFoundation\Response
     {
         /** @var User $user */
         $user = $token->getUser();
