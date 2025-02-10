@@ -58,8 +58,6 @@ jobs:
         with:
           dependency-versions: '${{ matrix.deps }}'
           working-directory: ./
-        env:
-          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
 
       - name: Start MySQL
         run: |
