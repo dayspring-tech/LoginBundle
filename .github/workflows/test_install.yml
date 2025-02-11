@@ -35,6 +35,7 @@ jobs:
 
       - name: Create project and install dependencies
         run: |
-            composer create-project -s dev symfony/skeleton:"${{ matrix.symfony }}" my_project_name 
+            composer create-project symfony/skeleton:"${{ matrix.symfony }}" my_project_name 
             cd my_project_name
+            sed -i 's/"stable"/"dev"/g' composer.json
             composer require dayspring-tech/login-bundle:"dev-${{ github.ref_name }}"
