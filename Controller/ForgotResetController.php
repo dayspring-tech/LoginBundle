@@ -5,6 +5,7 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
@@ -24,27 +25,14 @@ use Symfony\Component\Mime\Email;
 
 class ForgotResetController extends AbstractController
 {
-    protected $userProvider;
-    protected $authenticationManager;
-    protected $session;
-    protected $tokenStorage;
-    protected $userPasswordHasher;
-    protected $mailer;
 
     public function __construct(
-//        AuthenticationManagerInterface $authenticationManager,
-        UserProviderInterface $userProvider,
-        SessionInterface $session,
-        MailerInterface $mailer,
-        TokenStorageInterface $tokenStorage,
-        UserPasswordHasherInterface $userPasswordHasher
+        protected UserProviderInterface $userProvider,
+        protected RequestStack $requestStack,
+        protected MailerInterface $mailer,
+        protected TokenStorageInterface $tokenStorage,
+        protected UserPasswordHasherInterface $userPasswordHasher
     ) {
-//        $this->authenticationManager = $authenticationManager;
-        $this->mailer = $mailer;
-        $this->session = $session;
-        $this->tokenStorage = $tokenStorage;
-        $this->userPasswordHasher = $userPasswordHasher;
-        $this->userProvider = $userProvider;
     }
 
     /**
@@ -165,7 +153,7 @@ class ForgotResetController extends AbstractController
 //                $token = $this->authenticationManager->authenticate($token);
 //                $this->tokenStorage->setToken($token);
 
-                $this->session->getFlashBag()->add('success', 'New password has been saved.');
+                $this->requestStack->getSession()->getFlashBag()->add('success', 'New password has been saved.');
 
                 return $this->redirect($this->generateUrl("account_dashboard"));
             }
