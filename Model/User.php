@@ -35,7 +35,7 @@ class User extends BaseUser implements UserInterface, PasswordAuthenticatedUserI
         return $this->getEmail();
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 

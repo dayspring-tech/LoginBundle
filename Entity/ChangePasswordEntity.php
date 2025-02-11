@@ -19,11 +19,11 @@ class ChangePasswordEntity
     protected $newPassword;
 
     /**
-     * @SecurityAssert\UserPassword(
-     *     message = "Wrong value for your current password"
-     * )
      * @return mixed
      */
+    #[SecurityAssert\UserPassword(
+        message: 'Wrong value for your current password'
+    )]
     public function getPassword()
     {
         return $this->password;
