@@ -25,7 +25,14 @@ class TestKernel extends Kernel
 
     public function registerBundles(): iterable
     {
-        $bundles = [new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(), new \Symfony\Bundle\SecurityBundle\SecurityBundle(), new \Symfony\Bundle\TwigBundle\TwigBundle(), new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(), new \Propel\Bundle\PropelBundle\PropelBundle(), new \Dayspring\LoginBundle\DayspringLoginBundle()];
+        $bundles = [
+            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
+            new \Symfony\Bundle\TwigBundle\TwigBundle(),
+            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new \Propel\Bundle\PropelBundle\PropelBundle(),
+            new \Dayspring\LoginBundle\DayspringLoginBundle()
+        ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new \Symfony\Bundle\MonologBundle\MonologBundle();
