@@ -54,7 +54,7 @@ class User extends BaseUser implements UserInterface, PasswordAuthenticatedUserI
     /**
      * @Assert\Email()
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return parent::getEmail();
     }
@@ -72,7 +72,7 @@ class User extends BaseUser implements UserInterface, PasswordAuthenticatedUserI
      *      groups={"password"}
      * )
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return parent::getPassword() ?? '';
     }
