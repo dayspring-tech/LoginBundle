@@ -20,12 +20,12 @@ class SecurityController extends AbstractController
      */
     public function loginAction()
     {
-        return $this->render('@DayspringLogin/Security/login.html.twig', array(
+        return $this->render('@DayspringLogin/Security/login.html.twig', [
             // last username entered by the user (if any)
             'last_username' => $this->authenticationUtils->getLastUsername(),
             // last authentication error (if any)
             'error' => $this->authenticationUtils->getLastAuthenticationError(),
-        ));
+        ]);
     }
 
     /**

@@ -15,7 +15,7 @@ use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DayspringUserProviderTest extends WebTestCase
@@ -46,7 +46,7 @@ class DayspringUserProviderTest extends WebTestCase
 
     public function testLoadUserByUsername()
     {
-        $user = $this->userProvider->loadUserByUsername('testuser@example.com');
+        $user = $this->userProvider->loadUserByIdentifier('testuser@example.com');
 
         $this->assertEquals(1, $user->getId());
     }
@@ -58,7 +58,7 @@ class DayspringUserProviderTest extends WebTestCase
 
         $refreshedUser = $this->userProvider->refreshUser($user);
         $this->assertEquals(1, $refreshedUser->getId());
-        $this->assertEquals('testuser@example.com', $refreshedUser->getUsername());
+        $this->assertEquals('testuser@example.com', $refreshedUser->getUserIdentifier());
     }
 
     public function testSupportsClass()
@@ -70,8 +70,8 @@ class DayspringUserProviderTest extends WebTestCase
 
     public function testLoadUserByUsernameFailure()
     {
-        $this->expectException(UsernameNotFoundException::class);
-        $this->userProvider->loadUserByUsername('foobar@doesnotexist.com');
+        $this->expectException(UserNotFoundException::class);
+        $this->userProvider->loadUserByIdentifier('foobar@doesnotexist.com');
     }
 
     public function testRefreshUserFailure()
@@ -92,7 +92,7 @@ class DayspringUserProviderTest extends WebTestCase
 
 class SomeUser implements UserInterface
 {
-    public function getRoles()
+    public function getRoles(): array
     {
     }
 
@@ -104,11 +104,15 @@ class SomeUser implements UserInterface
     {
     }
 
+    public function getUserIdentifier(): string
+    {
+    }
+
     public function getUsername()
     {
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 }

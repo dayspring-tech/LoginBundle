@@ -10,6 +10,7 @@ use Propel\Bundle\PropelBundle\Command\FixturesLoadCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserAccountControllerTest extends WebTestCase
 {
@@ -23,7 +24,7 @@ class UserAccountControllerTest extends WebTestCase
         parent::setUp();
 
         $application = new Application(static::$kernel);
-        $application->add(new FixturesLoadCommand(static::$kernel->getContainer()));
+        $application->add(new FixturesLoadCommand(static::getContainer()));
 
         $command = $application->find('propel:fixtures:load');
         $commandTester = new CommandTester($command);
@@ -39,11 +40,11 @@ class UserAccountControllerTest extends WebTestCase
 
     protected function createUserAndLogin()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $user = new User();
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
         $user->setPassword($encoded);
         $user->addSecurityRole(SecurityRoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
         $user->save();
@@ -51,7 +52,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);
@@ -70,7 +71,7 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testInactiveUser()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $user = new User();
         $user
@@ -78,7 +79,7 @@ class UserAccountControllerTest extends WebTestCase
             ->setPassword("password")
             ->setIsActive(false);
 
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
         $user
             ->setPassword($encoded)
             ->save();
@@ -86,7 +87,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
         $crawler = $this->client->submit($form);
 
@@ -99,11 +100,11 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testLastLoginDate()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $user = new User();
         $user->setEmail(sprintf("test+%s@test.com", microtime()));
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
         $user->setPassword($encoded);
         $user->addSecurityRole(SecurityRoleQuery::create()->filterByRoleName("ROLE_User")->findOneOrCreate());
         $user->save();
@@ -113,7 +114,7 @@ class UserAccountControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);

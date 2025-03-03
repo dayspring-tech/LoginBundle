@@ -13,6 +13,8 @@ use Dayspring\LoginBundle\Model\User;
 use Dayspring\LoginBundle\Model\UserQuery;
 use Dayspring\LoginBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use function var_dump;
 
 class ForgotResetControllerTest extends WebTestCase
 {
@@ -59,7 +61,7 @@ class ForgotResetControllerTest extends WebTestCase
 
     public function testForgotPasswordDeactiveUser()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $user = new User();
         $user
@@ -67,7 +69,7 @@ class ForgotResetControllerTest extends WebTestCase
             ->setPassword("password")
             ->setIsActive(false);
 
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
         $user
             ->setPassword($encoded)
             ->save();
@@ -192,13 +194,13 @@ class ForgotResetControllerTest extends WebTestCase
 
     public function testChangePassword()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $securityRole = new SecurityRole();
         $securityRole->setRoleName('ROLE');
 
         $user = new User();
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
 
         $user
             ->addSecurityRole($securityRole)
@@ -209,7 +211,7 @@ class ForgotResetControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);
@@ -240,13 +242,13 @@ class ForgotResetControllerTest extends WebTestCase
 
     public function testChangePasswordNoMatch()
     {
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
+        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $securityRole = new SecurityRole();
         $securityRole->setRoleName('ROLE');
 
         $user = new User();
-        $encoded = $encoder->encodePassword($user, 'password');
+        $encoded = $encoder->hashPassword($user, 'password');
 
         $user
             ->addSecurityRole($securityRole)
@@ -257,7 +259,7 @@ class ForgotResetControllerTest extends WebTestCase
         $crawler = $this->client->request("GET", "/login");
 
         $form = $crawler->selectButton('Log in')->form();
-        $form['_username'] = $user->getUsername();
+        $form['_username'] = $user->getUserIdentifier();
         $form['_password'] = 'password';
 
         $crawler = $this->client->submit($form);

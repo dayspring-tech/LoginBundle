@@ -35,7 +35,7 @@ class UserAccountController extends AbstractController
     {
         $users = $this->userProvider->getUsers();
 
-        return $this->render('@DayspringLogin/UserAccount/list.html.twig', array('users' => $users));
+        return $this->render('@DayspringLogin/UserAccount/list.html.twig', ['users' => $users]);
     }
 
     /**
@@ -65,10 +65,7 @@ class UserAccountController extends AbstractController
 
         return $this->render(
             '@DayspringLogin/UserAccount/edit.html.twig',
-            array(
-                'form' => $form->createView(),
-                'title' => $userId ? 'Edit User' : 'Create New User'
-            )
+            ['form' => $form->createView(), 'title' => $userId ? 'Edit User' : 'Create New User']
         );
     }
 }

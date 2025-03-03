@@ -18,8 +18,6 @@ class UserType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Dayspring\LoginBundle\Model\User',
-        ));
+        $resolver->setDefaults(['data_class' => \Dayspring\LoginBundle\Model\User::class]);
     }
 }

@@ -20,7 +20,7 @@ class UserTest extends WebTestCase
         $user = new User();
         $user->setEmail('helloworld');
 
-        $this->assertEquals('helloworld', $user->getUsername());
+        $this->assertEquals('helloworld', $user->getUserIdentifier());
     }
 
     public function testEraseCredentials()
@@ -42,7 +42,7 @@ class UserTest extends WebTestCase
         $user->addSecurityRole($r);
 
         $this->assertEquals(1, count($user->getRoles()));
-        $this->assertEquals(array("ROLE_TEST"), $user->getRoles());
+        $this->assertEquals(["ROLE_TEST"], $user->getRoles());
     }
 
     public function testGetPassword()

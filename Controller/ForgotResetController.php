@@ -5,10 +5,11 @@ namespace Dayspring\LoginBundle\Controller;
 use Dayspring\LoginBundle\Entity\ChangePasswordEntity;
 use Dayspring\LoginBundle\Form\Type\ChangePasswordType;
 use Dayspring\LoginBundle\Form\Type\ResetPasswordType;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,27 +25,14 @@ use Symfony\Component\Mime\Email;
 
 class ForgotResetController extends AbstractController
 {
-    protected $userProvider;
-    protected $authenticationManager;
-    protected $session;
-    protected $tokenStorage;
-    protected $userPasswordEncoder;
-    protected $mailer;
 
     public function __construct(
-        AuthenticationManagerInterface $authenticationManager,
-        UserProviderInterface $userProvider,
-        SessionInterface $session,
-        MailerInterface $mailer,
-        TokenStorageInterface $tokenStorage,
-        UserPasswordEncoderInterface $userPasswordEncoder
+        protected UserProviderInterface $userProvider,
+        protected RequestStack $requestStack,
+        protected MailerInterface $mailer,
+        protected TokenStorageInterface $tokenStorage,
+        protected UserPasswordHasherInterface $userPasswordHasher
     ) {
-        $this->authenticationManager = $authenticationManager;
-        $this->mailer = $mailer;
-        $this->session = $session;
-        $this->tokenStorage = $tokenStorage;
-        $this->userPasswordEncoder = $userPasswordEncoder;
-        $this->userProvider = $userProvider;
     }
 
     /**
@@ -54,7 +42,7 @@ class ForgotResetController extends AbstractController
     {
         $genericMsg = 'Your request has been sent. If an account was found, an email has been sent. Please check your email for further instructions.';
 
-        $form = $this->createFormBuilder(array())
+        $form = $this->createFormBuilder([])
             ->add('email', EmailType::class)
             ->getForm();
         if ($request->getMethod() == "POST") {
@@ -69,9 +57,7 @@ class ForgotResetController extends AbstractController
                     $user->generateResetToken();
 
                     $subject = "Reset Password";
-                    $data = array(
-                        'user' => $user
-                    );
+                    $data = ['user' => $user];
                     $fromAddress = $this->getParameter('login_bundle.from_address');
                     $fromDisplayName = $this->getParameter('login_bundle.from_display_name');
 
@@ -93,7 +79,7 @@ class ForgotResetController extends AbstractController
 
                     $this->mailer->send($message);
                 }
-            } catch (UsernameNotFoundException $e) {
+            } catch (UserNotFoundException $e) {
                 // do not throw an error for UsernameNotFoundException
             }
 
@@ -105,9 +91,7 @@ class ForgotResetController extends AbstractController
 
         }
 
-        return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', array(
-            'form' => $form->createView(),
-        ));
+        return $this->render('@DayspringLogin/ForgotReset/forgotPassword.html.twig', ['form' => $form->createView()]);
     }
 
     /**
@@ -123,8 +107,7 @@ class ForgotResetController extends AbstractController
                 if ($form->isValid()) {
                     $data = $form->getData();
 
-                    $encoded = $this->userPasswordEncoder->encodePassword($user, $data->getPassword());
-//                    $encoded = $this->userPasswordEncoder->hashPassword($user, $data->getPassword());
+                    $encoded = $this->userPasswordHasher->hashPassword($user, $data->getPassword());
                     $user->setPassword($encoded);
                     $user->save();
 
@@ -138,9 +121,7 @@ class ForgotResetController extends AbstractController
                     return $this->redirect($this->generateUrl('_login'));
                 }
             }
-            return $this->render('@DayspringLogin/ForgotReset/resetPassword.html.twig', array(
-                'form' => $form->createView()
-            ));
+            return $this->render('@DayspringLogin/ForgotReset/resetPassword.html.twig', ['form' => $form->createView()]);
         } else {
             throw new AccessDeniedHttpException("No User found with this reset token.");
         }
@@ -159,27 +140,24 @@ class ForgotResetController extends AbstractController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $encoded = $this->userPasswordEncoder->encodePassword($currentUser, $data->getNewPassword());
-//                $encoded = $this->userPasswordEncoder->hashPassword($currentUser, $data->getNewPassword());
+                $encoded = $this->userPasswordHasher->hashPassword($currentUser, $data->getNewPassword());
                 $currentUser->setPassword($encoded);
                 $currentUser->save();
 
-                $token = new UsernamePasswordToken(
-                    $currentUser,
-                    $data->getNewPassword(),
-                    "secured_area",
-                    $currentUser->getRoles()
-                );
-                $token = $this->authenticationManager->authenticate($token);
-                $this->tokenStorage->setToken($token);
+//                $token = new UsernamePasswordToken(
+//                    $currentUser,
+//                    $data->getNewPassword(),
+//                    "secured_area",
+//                    $currentUser->getRoles()
+//                );
+//                $token = $this->authenticationManager->authenticate($token);
+//                $this->tokenStorage->setToken($token);
 
-                $this->session->getFlashBag()->add('success', 'New password has been saved.');
+                $this->requestStack->getSession()->getFlashBag()->add('success', 'New password has been saved.');
 
                 return $this->redirect($this->generateUrl("account_dashboard"));
             }
         }
-        return $this->render('@DayspringLogin/ForgotReset/changePassword.html.twig', array(
-            'form' => $form->createView()
-        ));
+        return $this->render('@DayspringLogin/ForgotReset/changePassword.html.twig', ['form' => $form->createView()]);
     }
 }

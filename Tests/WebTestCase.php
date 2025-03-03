@@ -19,7 +19,7 @@ class WebTestCase extends BaseWebTestCase
 
     protected static $application;
 
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
         return TestKernel::class;
     }
